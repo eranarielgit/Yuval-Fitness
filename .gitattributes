@@ -1,0 +1,9 @@
+# Normalise text files to LF in the repository; Git still checks them out
+# with native line endings on Windows.
+* text=auto
+
+# Photography - never diff or convert these.
+*.avif binary
+*.jpg  binary
+*.png  binary
+*.webp binary

@@ -1,0 +1,9 @@
+# Serve the coming-soon page ahead of Hostinger's default.php placeholder.
+DirectoryIndex index.html index.php
+
+# Don't let browsers cache the placeholder for long - the real site is coming.
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=300, must-revalidate"
+  </FilesMatch>
+</IfModule>

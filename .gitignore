@@ -1,0 +1,13 @@
+# OS / sync artefacts
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
+
+# Local tooling (regenerable; not part of the site)
+.claude/
+
+# In case a build step is ever added
+node_modules/
+dist/

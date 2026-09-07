@@ -1,0 +1,90 @@
+/* ==========================================================================
+   Client area - holding page until the trainee app is built
+   Loaded after styles.css; tokens, buttons, header and footer all come
+   from the main stylesheet.
+   ========================================================================== */
+
+.portal {
+  padding-block: var(--sp-9) var(--section-y);
+}
+
+/* Back link to the homepage, matching the one on the statement page. */
+.portal__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-block-size: var(--target-min);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--c-muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+
+.portal__back:hover,
+.portal__back:focus-visible { color: var(--c-accent-soft); }
+
+/* Drawn pointing left and mirrored for RTL, so one glyph serves both. */
+.portal__back .icon { inline-size: 1rem; block-size: 1rem; }
+[dir="rtl"] .portal__back .icon { transform: scaleX(-1); }
+
+.portal__panel {
+  margin-block-start: var(--sp-6);
+  padding: var(--sp-8) var(--sp-6);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background-color: var(--c-surface);
+}
+
+.portal__title {
+  font-size: var(--fs-h2);
+  margin-block-end: var(--sp-5);
+}
+
+.portal__lead {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-normal);
+  color: var(--c-ink-soft);
+  max-inline-size: 46ch;
+}
+
+/* What the area will hold once it exists. No dates promised. */
+.portal__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin-block-start: var(--sp-7);
+  padding-block-start: var(--sp-7);
+  border-block-start: 1px solid var(--c-line);
+  max-inline-size: var(--measure);
+  color: var(--c-ink-soft);
+}
+
+.portal__list li {
+  position: relative;
+  padding-inline-start: var(--sp-5);
+  line-height: var(--lh-normal);
+}
+
+.portal__list li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: .72em;
+  inline-size: .625rem;
+  block-size: 1px;
+  background-color: var(--c-accent);
+}
+
+.portal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-5);
+  margin-block-start: var(--sp-8);
+}
+
+
+@media (min-width: 48em) {
+  .portal__panel { padding: var(--sp-10) var(--sp-9); }
+}

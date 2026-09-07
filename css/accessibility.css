@@ -1,0 +1,158 @@
+/* ==========================================================================
+   Accessibility statement page
+   Loaded after styles.css. Everything here is scoped to this page; the
+   shared tokens, buttons, header and footer come from the main stylesheet.
+   ========================================================================== */
+
+.legal {
+  padding-block: var(--sp-9) var(--section-y);
+}
+
+.legal__title {
+  font-size: var(--fs-h1);
+  margin-block: var(--sp-3) var(--sp-5);
+}
+
+.legal__meta {
+  font-size: var(--fs-sm);
+  color: var(--c-muted);
+  padding-block-end: var(--sp-7);
+  margin-block-end: var(--sp-8);
+  border-block-end: 1px solid var(--c-line);
+}
+
+/* One language version of the statement. */
+.legal__doc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+.legal__doc + .legal__doc {
+  margin-block-start: var(--sp-11);
+  padding-block-start: var(--sp-9);
+  border-block-start: 1px solid var(--c-line);
+}
+
+/* The English version runs left-to-right inside an otherwise RTL page. */
+.legal__doc[lang="en"] {
+  direction: ltr;
+  text-align: start;
+}
+
+.legal__block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.legal__block h2 {
+  font-size: var(--fs-h3);
+  color: var(--c-ink);
+}
+
+.legal__block h3 {
+  font-size: var(--fs-lead);
+  font-weight: 700;
+}
+
+.legal__block p {
+  color: var(--c-ink-soft);
+  max-inline-size: var(--measure);
+}
+
+/* Measures list. The dash marker is a real glyph rather than a colour,
+   so the list structure survives greyscale and high-contrast modes. */
+.legal__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  max-inline-size: var(--measure);
+  color: var(--c-ink-soft);
+}
+
+.legal__list li {
+  position: relative;
+  padding-inline-start: var(--sp-5);
+  line-height: var(--lh-normal);
+}
+
+.legal__list li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: .72em;
+  inline-size: .625rem;
+  block-size: 1px;
+  background-color: var(--c-accent);
+}
+
+/* Contact details, given visual weight because this is the actionable
+   part of the statement. */
+.legal__contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-7) var(--sp-6);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background-color: var(--c-surface);
+}
+
+.legal__contact-name {
+  font-size: var(--fs-h3);
+  font-weight: 900;
+  letter-spacing: var(--ls-tight);
+}
+
+.legal__contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3) var(--sp-6);
+}
+
+.legal__contact-links a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--target-min);
+  font-weight: 700;
+  color: var(--c-ink);
+  text-decoration-color: var(--c-line-strong);
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+
+.legal__contact-links a:hover,
+.legal__contact-links a:focus-visible { color: var(--c-accent-soft); }
+
+/* Back link to the homepage, above the statement. */
+.legal__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-block-size: var(--target-min);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--c-muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+
+.legal__back:hover,
+.legal__back:focus-visible { color: var(--c-accent-soft); }
+
+/* Arrow points to the inline-start edge and mirrors with the direction. */
+.legal__back .icon {
+  inline-size: 1rem;
+  block-size: 1rem;
+  transform: scaleX(1);
+}
+
+[dir="rtl"] .legal__back .icon { transform: scaleX(-1); }
+
+
+@media (min-width: 48em) {
+
+  .legal__contact { padding: var(--sp-8) var(--sp-7); }
+
+  .legal__doc { gap: var(--sp-9); }
+}

@@ -1,0 +1,1351 @@
+/* ==========================================================================
+   Yuval Fitness - Global stylesheet
+   Dark mode | RTL Hebrew | Mobile first
+   --------------------------------------------------------------------------
+   Order inside this file:
+     1. Design tokens
+     2. Reset & base
+     3. Typography
+     4. Layout primitives
+     5. Accessibility utilities
+     7-19. Components & sections
+     20. Breakpoints
+     21. Reduced motion
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   ========================================================================== */
+
+:root {
+
+  /* ---- Colour -------------------------------------------------------------
+     Contrast against --c-bg (verified):
+       --c-ink 21.0:1   --c-muted 7.3:1   --c-accent 7.0:1
+     All pass WCAG AA for body text and AAA for large text.               */
+
+  --c-bg:          #0d0e12;   /* page background                          */
+  --c-surface:     #14161c;   /* raised panel, one step off the page      */
+
+  --c-ink:         #f4f5f7;   /* primary text                             */
+  --c-ink-soft:    #cfd3db;   /* body copy on dark                        */
+  --c-muted:       #9aa0ad;   /* meta, captions, labels                   */
+
+  --c-accent:      #ff6b2c;   /* the single brand accent                  */
+  --c-accent-soft: #ffb08a;   /* accent text on dark, gentler             */
+
+  --c-wa:          #25d366;   /* WhatsApp brand green                     */
+  --c-wa-hover:    #2ee878;
+  --c-wa-ink:      #08210f;   /* text on the green button                 */
+
+  --c-line:        rgba(255, 255, 255, .10);   /* hairline divider        */
+  --c-line-strong: rgba(255, 255, 255, .18);
+
+  /* ---- Typography ---------------------------------------------------------
+     Sizes are rem-based so browser text zoom and user font settings work.
+     clamp() lets each step scale between a mobile min and a desktop max.  */
+
+  --font-body: 'Heebo', 'Segoe UI', Arial, sans-serif;
+
+  --fs-display: clamp(2.75rem,  6.6vw, 5.5rem);   /* hero headline        */
+  --fs-h1:      clamp(2.5rem,   6.5vw, 4.5rem);
+  --fs-h2:      clamp(2rem,     4.5vw, 3.25rem);
+  --fs-h3:      clamp(1.375rem, 2.6vw, 1.875rem);
+  --fs-lead:    clamp(1.125rem, 2.1vw, 1.375rem); /* intro paragraph      */
+  --fs-body:    clamp(1rem,     1.4vw, 1.125rem);
+  --fs-sm:      .9375rem;
+  --fs-xs:      .8125rem;
+
+  --lh-tight:   .98;    /* display headlines only                         */
+  --lh-snug:    1.15;   /* section headings                               */
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.7;    /* body copy - Hebrew reads better with air       */
+
+  --ls-tight:  -.02em;  /* large type needs negative tracking             */
+  --ls-wide:    .18em;  /* small uppercase Latin labels                   */
+
+  --measure:      65ch; /* comfortable max line length for body copy      */
+  --measure-lead: 40ch; /* shorter for large lead paragraphs              */
+
+  /* ---- Spacing ------------------------------------------------------------
+     A 4px-based scale. Use these, never arbitrary values.                 */
+
+  --sp-1:  .25rem;    /*   4px */
+  --sp-2:  .5rem;     /*   8px */
+  --sp-3:  .75rem;    /*  12px */
+  --sp-4:  1rem;      /*  16px */
+  --sp-5:  1.5rem;    /*  24px */
+  --sp-6:  2rem;      /*  32px */
+  --sp-7:  2.5rem;    /*  40px */
+  --sp-8:  3rem;      /*  48px */
+  --sp-9:  4rem;      /*  64px */
+  --sp-10: 5rem;      /*  80px */
+  --sp-11: 6.5rem;    /* 104px */
+  --sp-12: 8rem;      /* 128px */
+
+  /* Vertical rhythm between full-page sections - generous by design.      */
+  --section-y: clamp(4.5rem, 11vw, 9rem);
+
+  /* ---- Layout ------------------------------------------------------------ */
+
+  --container:        1180px;   /* standard content width                 */
+  --container-wide:   1400px;   /* full-bleed-ish media rows              */
+  --container-narrow: 720px;    /* long-form text                         */
+  --gutter:           clamp(1.25rem, 5vw, 3rem);
+
+  /* ---- Radius ------------------------------------------------------------ */
+
+  --r-sm:   .5rem;     /*  8px - inputs, small chips  */
+  --r-md:   .875rem;   /* 14px - cards, media         */
+  --r-lg:   1.5rem;    /* 24px - large media panels   */
+  --r-pill: 999px;     /*        buttons, tags        */
+
+  /* ---- Elevation ----------------------------------------------------------
+     Restrained. Shadows carry depth, not decoration.                      */
+
+  --shadow-md: 0 1.25rem 3rem rgba(0, 0, 0, .40);
+
+  /* ---- Motion -------------------------------------------------------------
+     Shared easing and durations so every animation, CSS or GSAP,
+     speaks the same language.                                             */
+
+  --ease-soft: cubic-bezier(.4, 0, .2, 1);
+
+  --dur-fast: .18s;
+  --dur-base: .4s;
+
+  /* ---- Focus --------------------------------------------------------------
+     One consistent indicator, visible over panels and photography alike.  */
+
+  --focus-ring:   2px solid var(--c-accent);
+  --focus-offset: 3px;
+
+  /* Minimum interactive target - WCAG 2.2 target size / comfortable touch. */
+  --target-min: 2.75rem;   /* 44px */
+}
+
+
+/* ==========================================================================
+   2. RESET & BASE
+   ========================================================================== */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+/* Remove default margins; spacing is applied deliberately. */
+body, h1, h2, h3, h4, p, figure, blockquote, dl, dd, ul, ol {
+  margin: 0;
+}
+
+ul[class], ol[class] {
+  padding: 0;
+  list-style: none;
+}
+
+html {
+  /* No font-size override - respect the user's browser setting so
+     rem-based type scales with their preferences and with text zoom. */
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* Offset so anchor jumps clear the sticky header. */
+  scroll-padding-block-start: var(--sp-9);
+}
+
+body {
+  min-block-size: 100vh;
+  background-color: var(--c-bg);
+  color: var(--c-ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-relaxed);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Guards against any single element pushing the page sideways. */
+  overflow-x: hidden;
+}
+
+/* Media defaults: never overflow, never cause layout shift. */
+img, picture, video, canvas, svg {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+img {
+  /* Photography is dark-toned; this avoids a white flash before load. */
+  background-color: var(--c-surface);
+}
+
+/* Form controls inherit type instead of falling back to system fonts. */
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: .08em;
+  text-underline-offset: .18em;
+}
+
+/* Hebrew hyphenation is unreliable; prefer clean wrapping. */
+p, li, h1, h2, h3, h4 {
+  overflow-wrap: break-word;
+}
+
+
+/* ==========================================================================
+   3. TYPOGRAPHY
+   ========================================================================== */
+
+h1, h2, h3, h4 {
+  font-weight: 900;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-tight);
+  text-wrap: balance;    /* keeps headline line breaks even where supported */
+}
+
+h1 { font-size: var(--fs-h1); }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); font-weight: 700; }
+
+p { text-wrap: pretty; }  /* avoids orphaned last words */
+
+/* Body copy constrained to a comfortable line length. */
+.prose { max-inline-size: var(--measure); }
+
+.lead {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-normal);
+  color: var(--c-ink-soft);
+  max-inline-size: var(--measure-lead);
+}
+
+/* Small uppercase Latin label - an eyebrow above a heading.
+   Hebrew has no letter case, so this is for Latin strings only. */
+.eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--c-accent-soft);
+}
+
+
+/* ==========================================================================
+   4. LAYOUT PRIMITIVES
+   ========================================================================== */
+
+/* Horizontal container with responsive gutters. */
+.container {
+  inline-size: 100%;
+  max-inline-size: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.container--wide   { max-inline-size: var(--container-wide); }
+.container--narrow { max-inline-size: var(--container-narrow); }
+
+/* Standard vertical rhythm for a page section. */
+.section { padding-block: var(--section-y); }
+
+
+/* ==========================================================================
+   5. ACCESSIBILITY UTILITIES
+   ========================================================================== */
+
+/* Visible only to screen readers. */
+.visually-hidden:not(:focus):not(:active) {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Keyboard shortcut past repeated navigation to the main content.
+   Moved off-screen with transform rather than display:none so it
+   stays in the tab order. */
+.skip-link {
+  position: absolute;
+  inset-block-start: var(--sp-3);
+  inset-inline-start: var(--sp-3);
+  z-index: 999;
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--r-pill);
+  background-color: var(--c-accent);
+  color: #1a0e07;
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible { transform: translateY(0); }
+
+/* One consistent focus indicator sitewide. :focus-visible keeps it off
+   for mouse users without ever hiding it from keyboard users. */
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--r-sm);
+}
+
+/* Engines without :focus-visible still get a visible ring via :focus. */
+:focus:not(:focus-visible) { outline: none; }
+
+/* Minimum interactive target. Applied per component rather than globally
+   so it never inflates inline text links inside a paragraph. */
+.target {
+  min-block-size: var(--target-min);
+  min-inline-size: var(--target-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ==========================================================================
+   7. REVEAL STATES
+   Elements that animate in are hidden only when scripting is available.
+   If JS or the GSAP CDN fails, main.js drops the `js` class from <html>
+   and everything below reverts to fully visible - the content is never
+   dependent on an animation completing.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  .js [data-reveal],
+  .js [data-reveal-card],
+  .js [data-reveal-media] {
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+}
+
+
+/* ==========================================================================
+   8. BUTTONS
+   One button component, three variants, three sizes. Every variant meets
+   the 44px minimum target and carries a non-colour state change on hover.
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+
+  min-block-size: var(--target-min);
+  padding: var(--sp-3) var(--sp-6);
+
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition:
+    background-color var(--dur-fast) var(--ease-soft),
+    border-color     var(--dur-fast) var(--ease-soft),
+    color            var(--dur-fast) var(--ease-soft),
+    transform        var(--dur-fast) var(--ease-soft);
+}
+
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+
+.btn--sm { padding: var(--sp-2) var(--sp-5); font-size: var(--fs-xs); }
+.btn--lg {
+  padding: var(--sp-4) var(--sp-8);
+  font-size: var(--fs-body);
+  min-block-size: 3.5rem;
+}
+
+/* Primary conversion button. */
+.btn--whatsapp {
+  background-color: var(--c-wa);
+  color: var(--c-wa-ink);
+}
+
+.btn--whatsapp:hover,
+.btn--whatsapp:focus-visible { background-color: var(--c-wa-hover); }
+
+/* Secondary. Outlined so it never competes with the WhatsApp button. */
+.btn--ghost {
+  background-color: transparent;
+  border-color: var(--c-line-strong);
+  color: var(--c-ink);
+}
+
+.btn--ghost:hover,
+.btn--ghost:focus-visible {
+  border-color: var(--c-accent);
+  color: var(--c-accent-soft);
+  background-color: rgba(255, 107, 44, .08);
+}
+
+.icon-wa { inline-size: 1.25em; block-size: 1.25em; flex: none; }
+.icon    { inline-size: 1.15em; block-size: 1.15em; flex: none; }
+
+
+/* ==========================================================================
+   9. SHARED SECTION FURNITURE
+   ========================================================================== */
+
+/* Heading group at the top of a section. */
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-block-end: var(--sp-9);
+  max-inline-size: 46rem;
+}
+
+.section-head--center {
+  margin-inline: auto;
+  text-align: center;
+  align-items: center;
+}
+
+/* Photographic frame. Aspect ratio is reserved up front so images never
+   shift the layout as they decode. */
+.media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background-color: var(--c-surface);
+}
+
+.media img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+
+/* ==========================================================================
+   10. SITE HEADER + NAVIGATION
+   ========================================================================== */
+
+.site-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 100;
+  padding-block: var(--sp-3);
+  transition: background-color var(--dur-base) var(--ease-soft),
+              border-color     var(--dur-base) var(--ease-soft);
+  border-block-end: 1px solid transparent;
+}
+
+/* The scrolled background lives on a pseudo-element, not on the header
+   itself. backdrop-filter establishes a containing block for fixed-position
+   descendants, and the mobile nav panel is one of them - putting the filter
+   on the header would make `position: fixed; inset: 0` resolve against the
+   header box instead of the viewport. */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: rgba(13, 14, 18, .85);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-soft);
+}
+
+/* Applied by script once the page has scrolled past the hero's top edge,
+   so the bar only gains weight when it actually overlaps content. */
+.site-header.is-scrolled::before { opacity: 1; }
+
+.site-header.is-scrolled { border-block-end-color: var(--c-line); }
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+
+/* Brand and toggle stay above the open mobile panel so the menu can always
+   be closed from the same control that opened it. */
+.brand,
+.nav-toggle {
+  position: relative;
+  z-index: 2;
+}
+
+/* ---- Brand ---- */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  text-decoration: none;
+  color: var(--c-ink);
+}
+
+.brand__mark {
+  display: grid;
+  place-items: center;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  flex: none;
+  border-radius: var(--r-md);
+  background-color: var(--c-accent);
+  color: #1a0e07;
+}
+
+.brand__mark svg { inline-size: 1.35rem; block-size: 1.35rem; }
+
+.brand__text { display: flex; flex-direction: column; line-height: 1.2; }
+
+.brand__name {
+  font-weight: 900;
+  font-size: 1.0625rem;
+  letter-spacing: -.01em;
+}
+
+.brand__role {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--c-muted);
+}
+
+/* ---- Mobile toggle ---- */
+
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+
+  min-block-size: var(--target-min);
+  min-inline-size: var(--target-min);
+  padding-inline: var(--sp-4);
+
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-pill);
+
+  color: var(--c-ink);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.nav-toggle:hover { border-color: var(--c-accent); }
+
+.nav-toggle__bars {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  inline-size: 1.125rem;
+}
+
+.nav-toggle__bars span {
+  display: block;
+  block-size: 2px;
+  border-radius: 2px;
+  background-color: currentColor;
+  transition: transform var(--dur-fast) var(--ease-soft),
+              opacity   var(--dur-fast) var(--ease-soft);
+}
+
+/* Bars fold into an X while the panel is open - a shape change, not just
+   a colour change, so the state is never signalled by colour alone. */
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* ---- Nav panel (mobile) ----
+   visibility:hidden also removes the links from the tab order, so a closed
+   menu can never be reached by keyboard. */
+
+.site-nav {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sp-8);
+
+  padding: var(--sp-10) var(--gutter);
+  background-color: var(--c-bg);
+
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-soft),
+              visibility var(--dur-base) step-end;
+}
+
+.site-nav.is-open {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity var(--dur-base) var(--ease-soft),
+              visibility 0s;
+}
+
+.site-nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.site-nav__list a {
+  display: block;
+  padding-block: var(--sp-3);
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  font-weight: 900;
+  letter-spacing: var(--ls-tight);
+  text-decoration: none;
+  color: var(--c-ink);
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+
+.site-nav__list a:hover { color: var(--c-accent); }
+
+/* Header actions: the client-area link and the WhatsApp button. Stacked
+   in the mobile panel, side by side once the nav becomes a bar. */
+.site-nav__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-4);
+}
+
+/* Locks background scrolling while the mobile panel is open. */
+body.nav-open { overflow: hidden; }
+
+
+/* ==========================================================================
+   11. HERO
+   ========================================================================== */
+
+.hero {
+  padding-block: var(--sp-8) var(--section-y);
+}
+
+.hero__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+.hero__title {
+  font-size: var(--fs-display);
+  line-height: var(--lh-tight);
+  margin-block-start: var(--sp-4);
+}
+
+.hero__lead { margin-block-start: var(--sp-6); }
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-block-start: var(--sp-8);
+}
+
+.media--hero { aspect-ratio: 3 / 2; }
+.media--hero img { object-position: 50% 40%; }
+
+
+/* ==========================================================================
+   12. ABOUT
+   ========================================================================== */
+
+.about__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+.about__title { margin-block: var(--sp-3) var(--sp-6); }
+
+.about__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  color: var(--c-ink-soft);
+}
+
+.media--portrait { aspect-ratio: 4 / 5; }
+.media--portrait img { object-position: 50% 25%; }
+
+
+/* ==========================================================================
+   13. TRAINING OPTIONS
+   ========================================================================== */
+
+.training__grid {
+  display: grid;
+  gap: var(--sp-5);
+}
+
+/* A single, flat panel - deliberately not a card inside a card. */
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-7) var(--sp-6);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background-color: var(--c-surface);
+  transition: border-color var(--dur-base) var(--ease-soft);
+}
+
+.option:hover { border-color: var(--c-line-strong); }
+
+.option__index {
+  font-size: var(--fs-sm);
+  font-weight: 900;
+  letter-spacing: var(--ls-wide);
+  color: var(--c-accent);
+}
+
+.option__title { margin-block-end: var(--sp-1); }
+
+.option__text { color: var(--c-ink-soft); }
+
+.option__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-3);
+  padding-block-start: var(--sp-4);
+  border-block-start: 1px solid var(--c-line);
+  font-size: var(--fs-sm);
+  color: var(--c-muted);
+}
+
+/* Bullet drawn as a text marker rather than colour alone. */
+.option__list li {
+  position: relative;
+  padding-inline-start: var(--sp-5);
+  line-height: var(--lh-normal);
+}
+
+.option__list li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: .65em;
+  inline-size: .5rem;
+  block-size: 1px;
+  background-color: var(--c-accent);
+}
+
+/* ---- Training style companion block ---- */
+
+.style-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-7);
+  margin-block-start: var(--sp-10);
+  padding-block-start: var(--sp-10);
+  border-block-start: 1px solid var(--c-line);
+}
+
+.style-block__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  color: var(--c-ink-soft);
+  max-inline-size: var(--measure);
+}
+
+.media--style { aspect-ratio: 1 / 1; }
+
+
+/* ==========================================================================
+   14. PROCESS
+   ========================================================================== */
+
+.process__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-9);
+}
+
+.process__aside h2 { margin-block: var(--sp-3) var(--sp-5); }
+
+.media--detail {
+  aspect-ratio: 3 / 2;
+  margin-block-start: var(--sp-7);
+}
+
+.process__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--sp-5);
+  padding-block: var(--sp-7);
+  border-block-start: 1px solid var(--c-line);
+}
+
+.step:last-child { border-block-end: 1px solid var(--c-line); }
+
+.step__num {
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: var(--ls-tight);
+  color: transparent;
+  /* Outlined numerals: presence without shouting. */
+  -webkit-text-stroke: 1px var(--c-accent);
+  min-inline-size: 2.5ch;
+}
+
+.step__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.step__title { font-size: var(--fs-h3); }
+
+.step__body p { color: var(--c-ink-soft); max-inline-size: var(--measure); }
+
+
+/* ==========================================================================
+   15. RESULTS — before / after
+   ========================================================================== */
+
+.results__grid {
+  display: grid;
+  gap: var(--sp-6);
+}
+
+.result {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+/* The two halves of one comparison, always side by side so the pair reads
+   as a single unit at every screen size. */
+.result__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-2);
+}
+
+.result__figure {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background-color: var(--c-surface);
+}
+
+.result__figure img {
+  inline-size: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+/* Text label, not a colour cue - the before/after distinction has to
+   survive greyscale and screen readers alike. */
+.result__label {
+  position: absolute;
+  inset-block-start: var(--sp-3);
+  inset-inline-start: var(--sp-3);
+  z-index: 2;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-pill);
+  background-color: rgba(13, 14, 18, .82);
+  color: var(--c-ink);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+/* Placeholder shown until real client photographs are supplied. */
+.result__slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  border: 1px dashed var(--c-line-strong);
+  border-radius: var(--r-md);
+  background-color: var(--c-surface);
+}
+
+.result__placeholder {
+  font-size: var(--fs-xs);
+  color: var(--c-muted);
+}
+
+
+/* ==========================================================================
+   16. CALL TO ACTION
+   ========================================================================== */
+
+.cta__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+  padding: var(--sp-9) var(--sp-6);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background-color: var(--c-surface);
+  text-align: center;
+}
+
+.cta__title { font-size: var(--fs-h2); }
+
+.cta__text {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-normal);
+  color: var(--c-ink-soft);
+  max-inline-size: 34ch;
+}
+
+.cta__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+  margin-block-start: var(--sp-3);
+}
+
+.cta__phone {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--target-min);
+  font-weight: 700;
+  color: var(--c-ink-soft);
+  text-decoration: none;
+  border-block-end: 1px solid var(--c-line-strong);
+  transition: color var(--dur-fast) var(--ease-soft),
+              border-color var(--dur-fast) var(--ease-soft);
+}
+
+.cta__phone:hover,
+.cta__phone:focus-visible {
+  color: var(--c-accent-soft);
+  border-block-end-color: var(--c-accent);
+}
+
+
+/* ==========================================================================
+   17. LOCATION
+   ========================================================================== */
+
+.location__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+.location__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.location__address {
+  display: flex;
+  flex-direction: column;
+  font-style: normal;
+  line-height: 1.25;
+}
+
+.location__street {
+  font-size: var(--fs-h3);
+  font-weight: 900;
+  letter-spacing: var(--ls-tight);
+}
+
+.location__city {
+  font-size: var(--fs-lead);
+  color: var(--c-muted);
+}
+
+.location__note {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  color: var(--c-ink-soft);
+}
+
+.location__note .icon { color: var(--c-accent); }
+
+.location__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+.media--studio {
+  aspect-ratio: 3 / 2;
+  margin-block-start: var(--sp-3);
+}
+
+.location__map {
+  overflow: hidden;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background-color: var(--c-surface);
+}
+
+.location__map iframe {
+  display: block;
+  inline-size: 100%;
+  block-size: 22rem;
+  border: 0;
+}
+
+
+/* ==========================================================================
+   18. FOOTER
+   The extra block-end padding keeps the last row clear of the floating
+   WhatsApp button.
+   ========================================================================== */
+
+.site-footer {
+  margin-block-start: var(--section-y);
+  padding-block: var(--sp-9) calc(var(--sp-12) + env(safe-area-inset-bottom, 0px));
+  border-block-start: 1px solid var(--c-line);
+}
+
+.site-footer__grid {
+  display: grid;
+  gap: var(--sp-7);
+  margin-block-end: var(--sp-8);
+}
+
+.site-footer__name {
+  font-size: var(--fs-h3);
+  font-weight: 900;
+  letter-spacing: var(--ls-tight);
+}
+
+.site-footer__role { color: var(--c-muted); }
+
+.site-footer__heading {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: var(--ls-wide);
+  color: var(--c-muted);
+  margin-block-end: var(--sp-3);
+}
+
+.site-footer__address { font-style: normal; color: var(--c-ink-soft); }
+
+.site-footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--target-min);
+  color: var(--c-ink-soft);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+
+.site-footer__links a:hover,
+.site-footer__links a:focus-visible {
+  color: var(--c-accent-soft);
+  text-decoration: underline;
+}
+
+.site-footer__legal {
+  padding-block-start: var(--sp-6);
+  border-block-start: 1px solid var(--c-line);
+  font-size: var(--fs-sm);
+  color: var(--c-muted);
+}
+
+
+/* ==========================================================================
+   19. FLOATING WHATSAPP
+   Sits on the inline-end edge, which resolves to the left in RTL, and
+   respects iOS safe areas.
+   ========================================================================== */
+
+.wa-float {
+  position: fixed;
+  z-index: 80;
+  inset-block-end: calc(var(--sp-5) + env(safe-area-inset-bottom, 0px));
+  inset-inline-end: calc(var(--sp-5) + env(safe-area-inset-left, 0px));
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+
+  min-inline-size: 3.5rem;
+  min-block-size: 3.5rem;
+  padding: 0;
+
+  border-radius: var(--r-pill);
+  background-color: var(--c-wa);
+  color: var(--c-wa-ink);
+
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  text-decoration: none;
+
+  box-shadow: var(--shadow-md);
+  transition: background-color var(--dur-fast) var(--ease-soft),
+              transform var(--dur-fast) var(--ease-soft);
+}
+
+.wa-float:hover,
+.wa-float:focus-visible {
+  background-color: var(--c-wa-hover);
+  transform: translateY(-2px);
+}
+
+.wa-float__icon { inline-size: 1.75rem; block-size: 1.75rem; flex: none; }
+
+/* Label is hidden on small screens where the circle form saves space;
+   the accessible name still comes from the visually-hidden text. */
+.wa-float__text { display: none; }
+
+
+/* ==========================================================================
+   20. BREAKPOINTS
+   Widths are in em so the layout responds to browser text zoom as well as
+   to viewport width.
+   ========================================================================== */
+
+/* ---- 40em / 640px — large phones, small tablets ---------------------- */
+@media (min-width: 40em) {
+
+  .hero__actions { gap: var(--sp-5); }
+
+  .cta__actions {
+    flex-direction: row;
+    gap: var(--sp-7);
+  }
+
+  .results__grid { gap: var(--sp-7); }
+
+  .site-footer__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+
+/* ---- 48em / 768px — tablets ------------------------------------------ */
+@media (min-width: 48em) {
+
+  .training__grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Third option spans both columns rather than leaving a gap. */
+  .option:last-child { grid-column: 1 / -1; }
+
+  .style-block {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-8);
+  }
+
+  .style-block__media { flex: 0 0 42%; }
+  .style-block__copy  { flex: 1 1 auto; }
+
+  .step {
+    grid-template-columns: 4rem 1fr;
+    gap: var(--sp-7);
+    padding-block: var(--sp-8);
+  }
+
+  .location__map iframe { block-size: 26rem; }
+
+  .media--hero { aspect-ratio: 16 / 9; }
+
+  /* Pill form: there is room for a label next to the icon. */
+  .wa-float {
+    padding-inline: var(--sp-5) var(--sp-6);
+    gap: var(--sp-3);
+  }
+
+  .wa-float__text { display: inline; }
+}
+
+
+/* ---- 64em / 1024px — laptops ----------------------------------------- */
+@media (min-width: 64em) {
+
+  /* Inline navigation replaces the overlay panel. */
+  .nav-toggle { display: none; }
+
+  .site-nav {
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-7);
+    padding: 0;
+    background: none;
+    visibility: visible;
+    opacity: 1;
+    transition: none;
+  }
+
+  .site-nav__list {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-6);
+  }
+
+  .site-nav__list a {
+    padding-block: var(--sp-2);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--c-ink-soft);
+  }
+
+  .site-nav__actions {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .site-header { padding-block: var(--sp-4); }
+
+  /* ---- Hero: copy and photograph side by side ---- */
+  .hero {
+    display: flex;
+    align-items: center;
+    min-block-size: min(88vh, 54rem);
+    padding-block: var(--sp-9) var(--section-y);
+  }
+
+  .hero__inner {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-9);
+  }
+
+  .hero__copy  { flex: 1 1 56%; }
+  .hero__media { flex: 1 1 44%; }
+
+  .media--hero { aspect-ratio: 1 / 1; }
+  .media--hero img { object-position: 55% 35%; }
+
+  /* ---- About: portrait beside the copy ---- */
+  .about__inner {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-10);
+  }
+
+  .about__media { flex: 0 0 40%; }
+  .about__copy  { flex: 1 1 auto; }
+
+  /* ---- Training: three across ---- */
+  .training__grid { grid-template-columns: repeat(3, 1fr); }
+  .option:last-child { grid-column: auto; }
+
+  .style-block {
+    margin-block-start: var(--sp-12);
+    padding-block-start: var(--sp-12);
+    gap: var(--sp-10);
+  }
+
+  /* ---- Process: sticky heading against scrolling steps ---- */
+  .process__inner {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--sp-10);
+  }
+
+  .process__aside { flex: 0 0 34%; }
+  .process__steps { flex: 1 1 auto; }
+
+  .process__aside-sticky {
+    position: sticky;
+    inset-block-start: var(--sp-11);
+  }
+
+  .step__num { font-size: 3rem; }
+
+  /* ---- Results: two comparisons per row ---- */
+  .results__grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* ---- Location: information beside the map ---- */
+  .location__grid {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--sp-9);
+  }
+
+  .location__info { flex: 0 0 40%; }
+  .location__map  { flex: 1 1 auto; }
+
+  .location__map iframe { block-size: 34rem; }
+
+  /* ---- Footer: four columns ---- */
+  .site-footer__grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
+
+  .cta__panel { padding: var(--sp-11) var(--sp-9); }
+}
+
+
+/* ---- 80em / 1280px — desktop ----------------------------------------- */
+@media (min-width: 80em) {
+
+  .hero__inner { gap: var(--sp-11); }
+
+  .section-head { margin-block-end: var(--sp-10); }
+
+  .training__grid { gap: var(--sp-6); }
+
+  .option { padding: var(--sp-8) var(--sp-7); }
+
+  .step { grid-template-columns: 5rem 1fr; }
+}
+
+
+/* ---- 100em / 1600px — large displays ---------------------------------
+   Type and rhythm open up rather than the container simply stretching. */
+@media (min-width: 100em) {
+
+  :root { --section-y: 10rem; }
+
+  .hero__copy  { flex: 1 1 50%; }
+  .hero__media { flex: 1 1 50%; }
+
+  .results__grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+
+/* ---- Short landscape phones ------------------------------------------
+   Keeps the hero from demanding more height than the viewport has. */
+@media (min-width: 64em) and (max-height: 34rem) {
+  .hero { min-block-size: auto; }
+}
