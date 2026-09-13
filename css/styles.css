@@ -1011,6 +1011,27 @@ body.nav-open { overflow: hidden; }
   margin-block-start: var(--sp-3);
 }
 
+/*
+ * Three smaller frames under the main studio shot.
+ *
+ * A plain grid rather than a carousel: three images do not justify controls,
+ * and a carousel hides two thirds of what someone came to look at. It stays
+ * three across even on a phone - at that size they read as a strip giving a
+ * sense of the room, and anyone who wants detail has the large image above.
+ */
+.studio-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-2);
+  padding: 0;
+  list-style: none;
+}
+
+.media--studio-thumb {
+  aspect-ratio: 4 / 3;
+}
+
 .location__map {
   overflow: hidden;
   border: 1px solid var(--c-line);
