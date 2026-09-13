@@ -286,12 +286,67 @@
 
 
   /* ------------------------------------------------------------------------
+     Studio gallery
+
+     Clicking a thumbnail promotes it to the large frame.
+
+     The thumbnails are real links to the image files, so with scripting off
+     they still lead somewhere useful. This only takes over the click when it
+     is a plain left-click - ctrl/cmd/shift/middle-click keep working as
+     links, because someone deliberately opening a photo in a new tab should
+     get a new tab.
+     ---------------------------------------------------------------------- */
+
+  function initStudioGallery() {
+    var root = document.querySelector('[data-studio]');
+    if (!root) { return; }
+
+    var main = root.querySelector('.studio__main');
+    var thumbs = root.querySelectorAll('.studio-thumb');
+    if (!main || !thumbs.length) { return; }
+
+    function select(thumb) {
+      var full = thumb.getAttribute('href');
+      if (!full || main.getAttribute('src') === full) { return; }
+
+      main.setAttribute('src', full);
+      // The description travels with the photo: a stale alt would describe
+      // the previous image to anyone who cannot see the new one.
+      main.setAttribute('alt', thumb.getAttribute('data-alt') || '');
+
+      for (var i = 0; i < thumbs.length; i++) {
+        var isCurrent = thumbs[i] === thumb;
+        thumbs[i].classList.toggle('is-current', isCurrent);
+        if (isCurrent) {
+          thumbs[i].setAttribute('aria-current', 'true');
+        } else {
+          thumbs[i].removeAttribute('aria-current');
+        }
+      }
+    }
+
+    root.addEventListener('click', function (event) {
+      var thumb = event.target.closest ? event.target.closest('.studio-thumb') : null;
+      if (!thumb || !root.contains(thumb)) { return; }
+
+      // Let the browser handle anything that is not a plain left-click.
+      if (event.button !== 0 || event.metaKey || event.ctrlKey ||
+          event.shiftKey || event.altKey) { return; }
+
+      event.preventDefault();
+      select(thumb);
+    });
+  }
+
+
+  /* ------------------------------------------------------------------------
      Init
      ---------------------------------------------------------------------- */
 
   initHeader();
   initNav();
   initReveals();
+  initStudioGallery();
   setCurrentYear();
 
   /* Exposed for any section module added later. */

@@ -1012,24 +1012,62 @@ body.nav-open { overflow: hidden; }
 }
 
 /*
- * Three smaller frames under the main studio shot.
+ * The studio gallery: one large frame with a strip of thumbnails under it.
  *
- * A plain grid rather than a carousel: three images do not justify controls,
- * and a carousel hides two thirds of what someone came to look at. It stays
- * three across even on a phone - at that size they read as a strip giving a
- * sense of the room, and anyone who wants detail has the large image above.
+ * Not a carousel. A carousel would hide three quarters of what someone opened
+ * this section to look at, and needs controls that four images do not justify.
+ * Every photo is visible at once; clicking one promotes it to the large frame.
  */
+.studio {
+  margin-block-start: var(--sp-8);
+}
+
 .studio-gallery {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--sp-2);
   margin-block-start: var(--sp-2);
   padding: 0;
   list-style: none;
 }
 
-.media--studio-thumb {
+.studio-thumb {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-md);
   aspect-ratio: 4 / 3;
+  /* Dimmed until chosen, so the current photo is obvious without a caption. */
+  opacity: 0.55;
+  transition: opacity var(--dur-fast) var(--ease-soft), outline-color var(--dur-fast) var(--ease-soft);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.studio-thumb img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.studio-thumb:hover,
+.studio-thumb:focus-visible {
+  opacity: 1;
+}
+
+/*
+ * The selected thumbnail. Full opacity AND a ring - two channels, because
+ * opacity alone is a weak signal and disappears entirely for anyone who
+ * cannot separate the two states by brightness.
+ */
+.studio-thumb.is-current {
+  opacity: 1;
+  outline-color: var(--c-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio-thumb { transition: none; }
 }
 
 .location__map {
