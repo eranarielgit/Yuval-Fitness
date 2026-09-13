@@ -1039,9 +1039,8 @@ body.nav-open { overflow: hidden; }
   aspect-ratio: 4 / 3;
   /* Dimmed until chosen, so the current photo is obvious without a caption. */
   opacity: 0.55;
-  transition: opacity var(--dur-fast) var(--ease-soft), outline-color var(--dur-fast) var(--ease-soft);
-  outline: 2px solid transparent;
-  outline-offset: 2px;
+  transition: opacity var(--dur-fast) var(--ease-soft),
+              box-shadow var(--dur-fast) var(--ease-soft);
 }
 
 .studio-thumb img {
@@ -1061,9 +1060,19 @@ body.nav-open { overflow: hidden; }
  * opacity alone is a weak signal and disappears entirely for anyone who
  * cannot separate the two states by brightness.
  */
+/*
+ * Selection uses box-shadow, NOT outline.
+ *
+ * outline belongs to :focus-visible. An earlier version marked the current
+ * thumbnail with an outline, which had the same specificity as the sitewide
+ * focus rule and came later in the file - so it silently replaced the focus
+ * ring, and a keyboard user tabbing through the gallery got nothing but a
+ * change in brightness. Keeping the two on separate properties means neither
+ * state can erase the other, and a focused non-current thumbnail shows both.
+ */
 .studio-thumb.is-current {
   opacity: 1;
-  outline-color: var(--c-accent);
+  box-shadow: 0 0 0 2px var(--c-accent);
 }
 
 @media (prefers-reduced-motion: reduce) {
