@@ -11,3 +11,7 @@ desktop.ini
 # In case a build step is ever added
 node_modules/
 dist/
+
+# Supabase CLI scratch (belongs to the app repo, not this one)
+supabase/
+.mcp.json
