@@ -101,7 +101,7 @@
 
     /* Above this width the panel is laid out as an inline bar and the
        toggle is hidden, so the open/close behaviour must not apply. */
-    var mobileQuery = window.matchMedia('(max-width: 63.99em)');
+    var mobileQuery = window.matchMedia('(max-width: 79.99em)');
 
     function isOpen() {
       return toggle.getAttribute('aria-expanded') === 'true';
@@ -265,6 +265,30 @@
         );
       }
 
+      /* ---- The app stage: a slow turn of the phone ----
+         A first taste of the 3D-on-scroll showcase: the device turns a few
+         degrees across the stage as it scrolls, scrubbed to the scrollbar.
+         Whatever replaces the mock later (screenshots, video, a 3D model)
+         sits inside .phone and inherits the turn. */
+      var phone = document.querySelector('[data-stage] .phone');
+
+      if (phone) {
+        gsap.fromTo(phone,
+          { rotateY: 14, rotateX: 5 },
+          {
+            rotateY: -14,
+            rotateX: -3,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: '[data-stage]',
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true
+            }
+          }
+        );
+      }
+
       /* Returned to matchMedia so the whole context is torn down and any
          inline styles are reverted if the preference changes. */
       return function cleanup() {
@@ -282,6 +306,61 @@
   function setCurrentYear() {
     var el = document.querySelector('[data-current-year]');
     if (el) { el.textContent = String(new Date().getFullYear()); }
+  }
+
+
+  /* ------------------------------------------------------------------------
+     App stage
+
+     Whichever chapter is crossing a line on screen decides which phone
+     screen shows. The line sits mid-viewport on wide screens, where the
+     phone is beside the copy; on phones it sits low, in the band of screen
+     left visible under the sticky device. IntersectionObserver rather than
+     a scroll handler, so nothing runs per frame, and none of it depends on
+     GSAP - the stage works if the CDN does not.
+     ---------------------------------------------------------------------- */
+
+  function initStage() {
+    var stage = document.querySelector('[data-stage]');
+    if (!stage || !('IntersectionObserver' in window)) { return; }
+
+    var chapters = stage.querySelectorAll('[data-chapter]');
+    var screens = stage.querySelectorAll('[data-screen]');
+    if (!chapters.length || !screens.length) { return; }
+
+    function show(name) {
+      var i;
+      for (i = 0; i < screens.length; i++) {
+        screens[i].classList.toggle('is-active', screens[i].getAttribute('data-screen') === name);
+      }
+      for (i = 0; i < chapters.length; i++) {
+        chapters[i].classList.toggle('is-active', chapters[i].getAttribute('data-chapter') === name);
+      }
+    }
+
+    var wideQuery = window.matchMedia('(min-width: 64em)');
+    var observer = null;
+
+    function observe() {
+      if (observer) { observer.disconnect(); }
+
+      observer = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting) {
+            show(entries[i].target.getAttribute('data-chapter'));
+          }
+        }
+      }, {
+        rootMargin: wideQuery.matches ? '-45% 0px -45% 0px' : '-58% 0px -38% 0px'
+      });
+
+      for (var i = 0; i < chapters.length; i++) { observer.observe(chapters[i]); }
+    }
+
+    show(chapters[0].getAttribute('data-chapter'));
+    stage.classList.add('is-live');
+    observe();
+    wideQuery.addEventListener('change', observe);
   }
 
 
@@ -346,6 +425,7 @@
   initHeader();
   initNav();
   initReveals();
+  initStage();
   initStudioGallery();
   setCurrentYear();
 

@@ -1,7 +1,13 @@
-# Serve the coming-soon page ahead of Hostinger's default.php placeholder.
+# Root of yuval-fitness.com (public_html).
+#
+# CAUTION: the coaching app, app.yuval-fitness.com, is served from
+# public_html/app - INSIDE this directory - so every directive here also
+# applies to the app unless its own app/.htaccess overrides it. Keep this
+# file minimal, and check the app still loads after any change to it.
 DirectoryIndex index.html index.php
 
-# Don't let browsers cache the placeholder for long - the real site is coming.
+# HTML is revalidated every few minutes so a site update shows promptly.
+# CSS and JS are versioned with ?v= in the pages instead.
 <IfModule mod_headers.c>
   <FilesMatch "\.html$">
     Header set Cache-Control "public, max-age=300, must-revalidate"

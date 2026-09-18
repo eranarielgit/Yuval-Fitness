@@ -4,9 +4,9 @@
    shared tokens, buttons, header and footer come from the main stylesheet.
    ========================================================================== */
 
-.legal {
-  padding-block: var(--sp-9) var(--section-y);
-}
+/* The sheet's own padding supplies the vertical rhythm; the first panel on
+   the page rides over the header band rather than a section above it. */
+.legal-sheet { margin-block-start: var(--sp-5); }
 
 .legal__title {
   font-size: var(--fs-h1);
@@ -46,8 +46,11 @@
   gap: var(--sp-4);
 }
 
+/* h2 is in the display face sitewide; at a statement's scale it steps down
+   to the card-title size so the headings do not shout over the text. */
 .legal__block h2 {
-  font-size: var(--fs-h3);
+  font-size: var(--fs-title);
+  line-height: 1;
   color: var(--c-ink);
 }
 
@@ -100,9 +103,10 @@
 }
 
 .legal__contact-name {
-  font-size: var(--fs-h3);
-  font-weight: 900;
-  letter-spacing: var(--ls-tight);
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  font-weight: 700;
+  line-height: 1;
 }
 
 .legal__contact-links {
@@ -122,7 +126,7 @@
 }
 
 .legal__contact-links a:hover,
-.legal__contact-links a:focus-visible { color: var(--c-accent-soft); }
+.legal__contact-links a:focus-visible { color: var(--c-accent-text); }
 
 /* Back link to the homepage, above the statement. */
 .legal__back {
@@ -138,7 +142,7 @@
 }
 
 .legal__back:hover,
-.legal__back:focus-visible { color: var(--c-accent-soft); }
+.legal__back:focus-visible { color: var(--c-accent-text); }
 
 /* Arrow points to the inline-start edge and mirrors with the direction. */
 .legal__back .icon {

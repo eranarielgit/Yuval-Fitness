@@ -1,75 +1,79 @@
 /* ==========================================================================
    Yuval Fitness - Global stylesheet
-   Dark mode | RTL Hebrew | Mobile first
+   Black bands, white sheets, one hot orange | RTL Hebrew | Mobile first
    --------------------------------------------------------------------------
+   The site wears the coaching app's clothes (see DESIGN.md in the app repo):
+   near-black bands carry titles in Karantina, white sheets with rounded top
+   corners ride up over them and hold the reading, and orange marks the one
+   action a block is for. Someone who signs in to app.yuval-fitness.com from
+   here should feel they never left.
+
    Order inside this file:
      1. Design tokens
-     2. Reset & base
-     3. Typography
-     4. Layout primitives
-     5. Accessibility utilities
+     2. Surfaces (band / sheet)
+     3. Reset & base
+     4. Typography
+     5. Layout primitives
+     6. Accessibility utilities
      7-19. Components & sections
      20. Breakpoints
-     21. Reduced motion
    ========================================================================== */
 
 
 /* ==========================================================================
    1. DESIGN TOKENS
+   Values are the app's (apps/mobile/src/theme/tokens.ts). Surface-dependent
+   colours - text, lines, cards, focus - are NOT here; they are set per
+   surface in section 2, so a component reads correctly on either one.
    ========================================================================== */
 
 :root {
 
-  /* ---- Colour -------------------------------------------------------------
-     Contrast against --c-bg (verified):
-       --c-ink 21.0:1   --c-muted 7.3:1   --c-accent 7.0:1
-     All pass WCAG AA for body text and AAA for large text.               */
+  /* ---- Fixed colours ---------------------------------------------------- */
 
-  --c-bg:          #0d0e12;   /* page background                          */
-  --c-surface:     #14161c;   /* raised panel, one step off the page      */
+  --band:          #0b0b0d;   /* bands, tab-bar black                      */
+  --band-raised:   #1c1d21;   /* controls and cards on a band              */
+  --sheet:         #ffffff;
 
-  --c-ink:         #f4f5f7;   /* primary text                             */
-  --c-ink-soft:    #cfd3db;   /* body copy on dark                        */
-  --c-muted:       #9aa0ad;   /* meta, captions, labels                   */
+  --c-accent:      #ff6b2c;   /* fill: primary pill, marks, rules          */
+  --c-accent-press:#e85a1e;
+  --c-accent-ink:  #b3410e;   /* orange as TEXT on white (5.71:1)          */
+  --c-on-accent:   #0e0e10;   /* text on the orange fill (6.79:1) - white
+                                 on this orange is only 2.84:1             */
 
-  --c-accent:      #ff6b2c;   /* the single brand accent                  */
-  --c-accent-soft: #ffb08a;   /* accent text on dark, gentler             */
-
-  --c-wa:          #25d366;   /* WhatsApp brand green                     */
+  --c-wa:          #25d366;   /* WhatsApp brand green                      */
   --c-wa-hover:    #2ee878;
-  --c-wa-ink:      #08210f;   /* text on the green button                 */
-
-  --c-line:        rgba(255, 255, 255, .10);   /* hairline divider        */
-  --c-line-strong: rgba(255, 255, 255, .18);
+  --c-wa-ink:      #08210f;   /* text on the green                         */
 
   /* ---- Typography ---------------------------------------------------------
-     Sizes are rem-based so browser text zoom and user font settings work.
-     clamp() lets each step scale between a mobile min and a desktop max.  */
+     Karantina is the app's display face: tall, condensed, heavy. It runs
+     larger than a regular face would for the same weight. Heebo reads.
+     Sizes are rem-based so browser text zoom and user settings work.      */
 
-  --font-body: 'Heebo', 'Segoe UI', Arial, sans-serif;
+  --font-display: 'Karantina', 'Heebo', 'Segoe UI', Arial, sans-serif;
+  --font-body:    'Heebo', 'Segoe UI', Arial, sans-serif;
 
-  --fs-display: clamp(2.75rem,  6.6vw, 5.5rem);   /* hero headline        */
-  --fs-h1:      clamp(2.5rem,   6.5vw, 4.5rem);
-  --fs-h2:      clamp(2rem,     4.5vw, 3.25rem);
-  --fs-h3:      clamp(1.375rem, 2.6vw, 1.875rem);
-  --fs-lead:    clamp(1.125rem, 2.1vw, 1.375rem); /* intro paragraph      */
-  --fs-body:    clamp(1rem,     1.4vw, 1.125rem);
+  /* Four title sizes, desktop / phone (see the launch canvas spec):
+     display 120/68, h2 80/52, title 44/36, h3 20/18. */
+  --fs-display: clamp(4.25rem,  8.4vw, 7.5rem);  /* hero headline only    */
+  --fs-h1:      clamp(3.25rem,  5.6vw, 5rem);    /* page title, off home */
+  --fs-h2:      clamp(3.25rem,  5.6vw, 5rem);    /* section titles       */
+  --fs-title:   clamp(2.25rem,  3.1vw, 2.75rem); /* cards, chapters      */
+  --fs-h3:      clamp(1.125rem, 1.4vw, 1.25rem); /* Heebo 700             */
+  --fs-lead:    clamp(1.125rem, 1.4vw, 1.25rem);
+  --fs-body:    clamp(1rem,     1.2vw, 1.0625rem);
   --fs-sm:      .9375rem;
   --fs-xs:      .8125rem;
 
-  --lh-tight:   .98;    /* display headlines only                         */
-  --lh-snug:    1.15;   /* section headings                               */
+  --lh-display: .92;    /* Karantina headlines                            */
+  --lh-snug:    1.3;
   --lh-normal:  1.5;
   --lh-relaxed: 1.7;    /* body copy - Hebrew reads better with air       */
 
-  --ls-tight:  -.02em;  /* large type needs negative tracking             */
-  --ls-wide:    .18em;  /* small uppercase Latin labels                   */
+  --measure:      65ch;
+  --measure-lead: 42ch;
 
-  --measure:      65ch; /* comfortable max line length for body copy      */
-  --measure-lead: 40ch; /* shorter for large lead paragraphs              */
-
-  /* ---- Spacing ------------------------------------------------------------
-     A 4px-based scale. Use these, never arbitrary values.                 */
+  /* ---- Spacing: 4px base, as in the app -------------------------------- */
 
   --sp-1:  .25rem;    /*   4px */
   --sp-2:  .5rem;     /*   8px */
@@ -84,57 +88,113 @@
   --sp-11: 6.5rem;    /* 104px */
   --sp-12: 8rem;      /* 128px */
 
-  /* Vertical rhythm between full-page sections - generous by design.      */
-  --section-y: clamp(4.5rem, 11vw, 9rem);
+  --section-y: clamp(5rem, 8.9vw, 8rem);   /* 128 desktop, 80 phone */
 
   /* ---- Layout ------------------------------------------------------------ */
 
-  --container:        1180px;   /* standard content width                 */
-  --container-wide:   1400px;   /* full-bleed-ish media rows              */
-  --container-narrow: 720px;    /* long-form text                         */
-  --gutter:           clamp(1.25rem, 5vw, 3rem);
+  /* ONE content width for every section, header and hero included: 1240px
+     of content, so at 1440 the page has 100px margins and every block
+     starts on the same edge. (Header and hero used to run 110px wider.) */
+  --container:        calc(1240px + 2 * var(--gutter));
+  --container-wide:   var(--container);
+  --container-narrow: 760px;
+  --grid-gap:         var(--sp-5);   /* 24px: the 12-column gutter */
+  /* 16px on a phone, as in the app; opens up on wider screens. */
+  --gutter:           clamp(1rem, 5vw, 3rem);
 
-  /* ---- Radius ------------------------------------------------------------ */
+  /* ---- Radius (app values) ---------------------------------------------- */
 
-  --r-sm:   .5rem;     /*  8px - inputs, small chips  */
-  --r-md:   .875rem;   /* 14px - cards, media         */
-  --r-lg:   1.5rem;    /* 24px - large media panels   */
-  --r-pill: 999px;     /*        buttons, tags        */
-
-  /* ---- Elevation ----------------------------------------------------------
-     Restrained. Shadows carry depth, not decoration.                      */
+  --r-sm:    .5rem;     /*  8 */
+  --r-md:    .75rem;    /* 12 */
+  --r-lg:    1rem;      /* 16 - cards, stat tiles */
+  --r-xl:    1.5rem;    /* 24 - large media       */
+  --r-sheet: 1.75rem;   /* 28 - a sheet's top corners where it rides over */
+  --r-pill:  999px;
 
   --shadow-md: 0 1.25rem 3rem rgba(0, 0, 0, .40);
 
-  /* ---- Motion -------------------------------------------------------------
-     Shared easing and durations so every animation, CSS or GSAP,
-     speaks the same language.                                             */
+  /* ---- Motion ------------------------------------------------------------ */
 
   --ease-soft: cubic-bezier(.4, 0, .2, 1);
-
   --dur-fast: .18s;
   --dur-base: .4s;
 
-  /* ---- Focus --------------------------------------------------------------
-     One consistent indicator, visible over panels and photography alike.  */
+  /* ---- Targets: the app's pill minimum is 50pt ------------------------- */
 
-  --focus-ring:   2px solid var(--c-accent);
-  --focus-offset: 3px;
-
-  /* Minimum interactive target - WCAG 2.2 target size / comfortable touch. */
-  --target-min: 2.75rem;   /* 44px */
+  --target-min: 2.75rem;   /* 44px - small controls, links */
+  --target-btn: 3.125rem;  /* 50px - pills                 */
 }
 
 
 /* ==========================================================================
-   2. RESET & BASE
+   2. SURFACES
+   Two grounds, each defining the same set of names. Components only ever
+   use these names, so a card, a ghost button or a focus ring is right on
+   whichever ground it lands on.
+
+   The band is the default (the page's own background, the header, the
+   hero); `.sheet` switches to the light set, `.band` switches back.
+
+   Contrast (measured on the darkest ground each colour sits on):
+     band:  ink 19.8   ink-soft 12.4   muted 8.0   accent-text 6.9
+     sheet: ink 19.1   ink-soft  8.8   muted 5.5   accent-text 5.7
+   ========================================================================== */
+
+:root,
+.band {
+  --c-bg:          var(--band);
+  --c-surface:     var(--band-raised);
+  --c-ink:         #ffffff;
+  --c-ink-soft:    rgba(255, 255, 255, .80);
+  --c-muted:       rgba(255, 255, 255, .64);
+  --c-line:        rgba(255, 255, 255, .12);
+  --c-line-strong: rgba(255, 255, 255, .26);
+  --c-accent-text: var(--c-accent);
+  --c-focus:       var(--c-accent);
+}
+
+.sheet {
+  --c-bg:          var(--sheet);
+  --c-surface:     #f2f2ef;
+  --c-ink:         #0e0e10;
+  --c-ink-soft:    #46494f;
+  --c-muted:       #5f636b;
+  --c-line:        rgba(11, 11, 13, .10);
+  --c-line-strong: rgba(11, 11, 13, .22);
+  --c-accent-text: var(--c-accent-ink);
+  /* The fill orange is 2.84:1 on white - under the 3:1 a focus indicator
+     needs - so on a sheet the ring uses the deeper ink cut of the hue. */
+  --c-focus:       var(--c-accent-ink);
+}
+
+.band,
+.sheet {
+  background-color: var(--c-bg);
+  color: var(--c-ink);
+}
+
+/* A panel rides up over whatever came before it, on rounded top corners -
+   the app's sheet-over-band move, repeated down the page so bands and
+   sheets stack like the app's screens. Later panels paint on top because
+   they come later in the DOM. The extra block-end padding is what the
+   next panel will cover. */
+.panel {
+  position: relative;
+  margin-block-start: calc(var(--r-sheet) * -1);
+  border-start-start-radius: var(--r-sheet);
+  border-start-end-radius: var(--r-sheet);
+  padding-block: var(--section-y) calc(var(--section-y) + var(--r-sheet));
+}
+
+
+/* ==========================================================================
+   3. RESET & BASE
    ========================================================================== */
 
 *,
 *::before,
 *::after { box-sizing: border-box; }
 
-/* Remove default margins; spacing is applied deliberately. */
 body, h1, h2, h3, h4, p, figure, blockquote, dl, dd, ul, ol {
   margin: 0;
 }
@@ -145,17 +205,16 @@ ul[class], ol[class] {
 }
 
 html {
-  /* No font-size override - respect the user's browser setting so
-     rem-based type scales with their preferences and with text zoom. */
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  /* Offset so anchor jumps clear the sticky header. */
   scroll-padding-block-start: var(--sp-9);
+  /* Overscroll at either end shows band, not a white flash. */
+  background-color: var(--band);
 }
 
 body {
   min-block-size: 100vh;
-  background-color: var(--c-bg);
+  background-color: var(--band);
   color: var(--c-ink);
   font-family: var(--font-body);
   font-size: var(--fs-body);
@@ -163,23 +222,17 @@ body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Guards against any single element pushing the page sideways. */
   overflow-x: hidden;
 }
 
-/* Media defaults: never overflow, never cause layout shift. */
 img, picture, video, canvas, svg {
   display: block;
   max-inline-size: 100%;
   block-size: auto;
 }
 
-img {
-  /* Photography is dark-toned; this avoids a white flash before load. */
-  background-color: var(--c-surface);
-}
+img { background-color: var(--c-surface); }
 
-/* Form controls inherit type instead of falling back to system fonts. */
 input, button, textarea, select {
   font: inherit;
   color: inherit;
@@ -197,30 +250,35 @@ a {
   text-underline-offset: .18em;
 }
 
-/* Hebrew hyphenation is unreliable; prefer clean wrapping. */
-p, li, h1, h2, h3, h4 {
-  overflow-wrap: break-word;
-}
+p, li, h1, h2, h3, h4 { overflow-wrap: break-word; }
 
 
 /* ==========================================================================
-   3. TYPOGRAPHY
+   4. TYPOGRAPHY
    ========================================================================== */
 
-h1, h2, h3, h4 {
-  font-weight: 900;
-  line-height: var(--lh-snug);
-  letter-spacing: var(--ls-tight);
-  text-wrap: balance;    /* keeps headline line breaks even where supported */
+/* Titles in the display face. Karantina ships a single 700 file; naming
+   that weight exactly means the browser never synthesises a bold on top. */
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: var(--lh-display);
+  letter-spacing: 0;
+  text-wrap: balance;
 }
 
 h1 { font-size: var(--fs-h1); }
 h2 { font-size: var(--fs-h2); }
-h3 { font-size: var(--fs-h3); font-weight: 700; }
 
-p { text-wrap: pretty; }  /* avoids orphaned last words */
+h3, h4 {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  line-height: var(--lh-snug);
+  text-wrap: balance;
+}
 
-/* Body copy constrained to a comfortable line length. */
+p { text-wrap: pretty; }
+
 .prose { max-inline-size: var(--measure); }
 
 .lead {
@@ -230,22 +288,36 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   max-inline-size: var(--measure-lead);
 }
 
-/* Small uppercase Latin label - an eyebrow above a heading.
-   Hebrew has no letter case, so this is for Latin strings only. */
+/* The label above a title: short orange rule, then the word. The rule is
+   the stat tile's "label / short rule" borrowed from the app. Hebrew has no
+   case, so no uppercase or tracking games. */
 .eyebrow {
-  font-size: var(--fs-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: var(--fs-sm);
   font-weight: 700;
-  letter-spacing: var(--ls-wide);
-  text-transform: uppercase;
-  color: var(--c-accent-soft);
+  line-height: 1.3;
+  color: var(--c-accent-text);
 }
+
+.eyebrow::before {
+  content: '';
+  inline-size: 1.5rem;
+  block-size: 3px;
+  border-radius: 2px;
+  background-color: var(--c-accent);
+  flex: none;
+}
+
+/* Section-head variant centres the rule-and-word unit itself. */
+.section-head--center .eyebrow { align-self: center; }
 
 
 /* ==========================================================================
-   4. LAYOUT PRIMITIVES
+   5. LAYOUT PRIMITIVES
    ========================================================================== */
 
-/* Horizontal container with responsive gutters. */
 .container {
   inline-size: 100%;
   max-inline-size: var(--container);
@@ -256,15 +328,19 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
 .container--wide   { max-inline-size: var(--container-wide); }
 .container--narrow { max-inline-size: var(--container-narrow); }
 
-/* Standard vertical rhythm for a page section. */
-.section { padding-block: var(--section-y); }
+/* Two sections sharing one sheet get a hairline between them rather than
+   a second panel edge. */
+.section + .section {
+  margin-block-start: var(--section-y);
+  padding-block-start: var(--section-y);
+  border-block-start: 1px solid var(--c-line);
+}
 
 
 /* ==========================================================================
-   5. ACCESSIBILITY UTILITIES
+   6. ACCESSIBILITY UTILITIES
    ========================================================================== */
 
-/* Visible only to screen readers. */
 .visually-hidden:not(:focus):not(:active) {
   position: absolute;
   inline-size: 1px;
@@ -274,9 +350,6 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   white-space: nowrap;
 }
 
-/* Keyboard shortcut past repeated navigation to the main content.
-   Moved off-screen with transform rather than display:none so it
-   stays in the tab order. */
 .skip-link {
   position: absolute;
   inset-block-start: var(--sp-3);
@@ -285,7 +358,7 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   padding: var(--sp-3) var(--sp-5);
   border-radius: var(--r-pill);
   background-color: var(--c-accent);
-  color: #1a0e07;
+  color: var(--c-on-accent);
   font-weight: 700;
   text-decoration: none;
   transform: translateY(-200%);
@@ -293,34 +366,21 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
 
 .skip-link:focus-visible { transform: translateY(0); }
 
-/* One consistent focus indicator sitewide. :focus-visible keeps it off
-   for mouse users without ever hiding it from keyboard users. */
+/* One focus indicator sitewide. Its colour comes from the surface, so it
+   holds 3:1 on black and on white alike. */
 :focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: var(--focus-offset);
+  outline: 2px solid var(--c-focus);
+  outline-offset: 3px;
   border-radius: var(--r-sm);
 }
 
-/* Engines without :focus-visible still get a visible ring via :focus. */
 :focus:not(:focus-visible) { outline: none; }
-
-/* Minimum interactive target. Applied per component rather than globally
-   so it never inflates inline text links inside a paragraph. */
-.target {
-  min-block-size: var(--target-min);
-  min-inline-size: var(--target-min);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
 
 
 /* ==========================================================================
    7. REVEAL STATES
-   Elements that animate in are hidden only when scripting is available.
-   If JS or the GSAP CDN fails, main.js drops the `js` class from <html>
-   and everything below reverts to fully visible - the content is never
-   dependent on an animation completing.
+   Hidden only when scripting is on. If GSAP fails to load, main.js drops
+   the `js` class and everything reverts to visible.
    ========================================================================== */
 
 @media (prefers-reduced-motion: no-preference) {
@@ -336,8 +396,9 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
 
 /* ==========================================================================
    8. BUTTONS
-   One button component, three variants, three sizes. Every variant meets
-   the 44px minimum target and carries a non-colour state change on hover.
+   The app's pill: 50px minimum. Primary is orange with a dark label, and a
+   block has at most one. WhatsApp keeps its own green because people
+   recognise it before they read it.
    ========================================================================== */
 
 .btn {
@@ -346,13 +407,13 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   justify-content: center;
   gap: var(--sp-3);
 
-  min-block-size: var(--target-min);
+  min-block-size: var(--target-btn);
   padding: var(--sp-3) var(--sp-6);
 
   border: 1px solid transparent;
   border-radius: var(--r-pill);
 
-  font-size: var(--fs-sm);
+  font-size: var(--fs-body);
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
@@ -366,54 +427,121 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
     transform        var(--dur-fast) var(--ease-soft);
 }
 
-.btn:hover { transform: translateY(-2px); }
-.btn:active { transform: translateY(0); }
+/* Pressed state from the app: a slight scale, no lift. */
+.btn:active { transform: scale(.96); }
 
-.btn--sm { padding: var(--sp-2) var(--sp-5); font-size: var(--fs-xs); }
-.btn--lg {
-  padding: var(--sp-4) var(--sp-8);
-  font-size: var(--fs-body);
-  min-block-size: 3.5rem;
+.btn--sm {
+  min-block-size: var(--target-min);
+  padding: var(--sp-2) var(--sp-5);
+  font-size: var(--fs-sm);
 }
 
-/* Primary conversion button. */
+.btn--lg {
+  min-block-size: 3.5rem;
+  padding: var(--sp-4) var(--sp-7);
+  font-size: var(--fs-lead);
+}
+
+.btn--primary {
+  background-color: var(--c-accent);
+  color: var(--c-on-accent);
+}
+
+.btn--primary:hover { background-color: var(--c-accent-press); }
+
 .btn--whatsapp {
   background-color: var(--c-wa);
   color: var(--c-wa-ink);
 }
 
-.btn--whatsapp:hover,
-.btn--whatsapp:focus-visible { background-color: var(--c-wa-hover); }
+.btn--whatsapp:hover { background-color: var(--c-wa-hover); }
 
-/* Secondary. Outlined so it never competes with the WhatsApp button. */
+/* Outlined; takes its colours from the surface it sits on. */
 .btn--ghost {
   background-color: transparent;
   border-color: var(--c-line-strong);
   color: var(--c-ink);
 }
 
-.btn--ghost:hover,
-.btn--ghost:focus-visible {
-  border-color: var(--c-accent);
-  color: var(--c-accent-soft);
-  background-color: rgba(255, 107, 44, .08);
+.btn--ghost:hover {
+  border-color: var(--c-ink);
 }
+
+/* ---- The way into the app -------------------------------------------
+   Every link to app.yuval-fitness.com carries `.app-link` and ends in the
+   same badge: the app's orange pill shrunk to a circle holding a forward
+   arrow. One mark for "this leaves the site and opens the app", wherever
+   it appears. */
+
+.app-badge {
+  display: grid;
+  place-items: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  flex: none;
+  border-radius: var(--r-pill);
+  background-color: var(--c-accent);
+  color: var(--c-on-accent);
+  transition: translate var(--dur-fast) var(--ease-soft),
+              background-color var(--dur-fast) var(--ease-soft);
+}
+
+.app-badge .icon { inline-size: 1rem; block-size: 1rem; }
+
+/* On hover the badge steps forward - toward the inline end, which is the
+   left in RTL - as if already on its way to the app. */
+.app-link:hover .app-badge,
+.app-link:focus-visible .app-badge {
+  translate: .25rem 0;
+  background-color: var(--c-accent-press);
+}
+
+[dir="rtl"] .app-link:hover .app-badge,
+[dir="rtl"] .app-link:focus-visible .app-badge {
+  translate: -.25rem 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-badge { transition: background-color var(--dur-fast) var(--ease-soft); }
+  .app-link:hover .app-badge,
+  .app-link:focus-visible .app-badge { translate: none; }
+}
+
+/* The header's sign-in button. Not a ghost any more: a raised dark pill
+   ringed in solid orange, the label in Heebo's heaviest cut, the badge
+   tucked into the end. Beside the green WhatsApp pill it reads as the
+   other door - for people already training - without competing with it. */
+.btn--app {
+  gap: var(--sp-3);
+  padding-block: var(--sp-1);
+  padding-inline: var(--sp-5) var(--sp-1);
+  border: 2px solid var(--c-accent);
+  background-color: var(--band-raised);
+  color: #fff;
+  font-weight: 800;
+}
+
+.btn--app:hover { background-color: rgba(255, 107, 44, .16); }
 
 .icon-wa { inline-size: 1.25em; block-size: 1.25em; flex: none; }
 .icon    { inline-size: 1.15em; block-size: 1.15em; flex: none; }
+
+/* Arrow glyphs are drawn pointing right (forward in LTR) and mirrored in
+   RTL, so "forward" always points the way the reader is going. */
+[dir="rtl"] .icon--dir { transform: scaleX(-1); }
 
 
 /* ==========================================================================
    9. SHARED SECTION FURNITURE
    ========================================================================== */
 
-/* Heading group at the top of a section. */
 .section-head {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: var(--sp-4);
-  margin-block-end: var(--sp-9);
-  max-inline-size: 46rem;
+  margin-block-end: clamp(2.5rem, 4.4vw, 4rem);   /* 64 desktop, 40 phone */
+  max-inline-size: 53rem;                          /* eight columns       */
 }
 
 .section-head--center {
@@ -422,12 +550,10 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   align-items: center;
 }
 
-/* Photographic frame. Aspect ratio is reserved up front so images never
-   shift the layout as they decode. */
 .media {
   position: relative;
   overflow: hidden;
-  border-radius: var(--r-lg);
+  border-radius: var(--r-xl);
   background-color: var(--c-surface);
 }
 
@@ -435,6 +561,13 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
+}
+
+/* A card on a sheet: the app's `surface` fill, 16px radius, hairline. */
+.card {
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background-color: var(--c-surface);
 }
 
 
@@ -447,31 +580,25 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   inset-block-start: 0;
   z-index: 100;
   padding-block: var(--sp-3);
-  transition: background-color var(--dur-base) var(--ease-soft),
-              border-color     var(--dur-base) var(--ease-soft);
   border-block-end: 1px solid transparent;
+  transition: border-color var(--dur-base) var(--ease-soft);
 }
 
-/* The scrolled background lives on a pseudo-element, not on the header
-   itself. backdrop-filter establishes a containing block for fixed-position
-   descendants, and the mobile nav panel is one of them - putting the filter
-   on the header would make `position: fixed; inset: 0` resolve against the
-   header box instead of the viewport. */
+/* The scrolled background lives on a pseudo-element: backdrop-filter on the
+   header itself would become the containing block for the fixed mobile nav
+   panel inside it. */
 .site-header::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
-  background-color: rgba(13, 14, 18, .85);
+  background-color: rgba(11, 11, 13, .88);
   backdrop-filter: blur(12px);
   opacity: 0;
   transition: opacity var(--dur-base) var(--ease-soft);
 }
 
-/* Applied by script once the page has scrolled past the hero's top edge,
-   so the bar only gains weight when it actually overlaps content. */
 .site-header.is-scrolled::before { opacity: 1; }
-
 .site-header.is-scrolled { border-block-end-color: var(--c-line); }
 
 .site-header__inner {
@@ -481,8 +608,6 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   gap: var(--sp-4);
 }
 
-/* Brand and toggle stay above the open mobile panel so the menu can always
-   be closed from the same control that opened it. */
 .brand,
 .nav-toggle {
   position: relative;
@@ -495,6 +620,7 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   display: inline-flex;
   align-items: center;
   gap: var(--sp-3);
+  min-block-size: var(--target-min);
   text-decoration: none;
   color: var(--c-ink);
 }
@@ -507,22 +633,25 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   flex: none;
   border-radius: var(--r-md);
   background-color: var(--c-accent);
-  color: #1a0e07;
+  color: var(--c-on-accent);
 }
 
 .brand__mark svg { inline-size: 1.35rem; block-size: 1.35rem; }
 
-.brand__text { display: flex; flex-direction: column; line-height: 1.2; }
+.brand__text { display: flex; flex-direction: column; line-height: 1; }
 
 .brand__name {
-  font-weight: 900;
-  font-size: 1.0625rem;
-  letter-spacing: -.01em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: .9;
 }
 
 .brand__role {
+  margin-block-start: var(--sp-1);
   font-size: var(--fs-xs);
   font-weight: 500;
+  line-height: 1.2;
   color: var(--c-muted);
 }
 
@@ -532,53 +661,56 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
-
   min-block-size: var(--target-min);
   min-inline-size: var(--target-min);
   padding-inline: var(--sp-4);
-
-  border: 1px solid var(--c-line-strong);
   border-radius: var(--r-pill);
-
+  background-color: var(--band-raised);
   color: var(--c-ink);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 
-.nav-toggle:hover { border-color: var(--c-accent); }
-
-.nav-toggle__bars {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  inline-size: 1.125rem;
+/* One square holds the brand glyph and the close X, stacked; which one
+   shows depends on aria-expanded, so the state is carried by shape. */
+.nav-toggle__icon {
+  display: grid;
+  inline-size: 1.375rem;
+  block-size: 1.375rem;
 }
 
-.nav-toggle__bars span {
-  display: block;
-  block-size: 2px;
-  border-radius: 2px;
-  background-color: currentColor;
-  transition: transform var(--dur-fast) var(--ease-soft),
-              opacity   var(--dur-fast) var(--ease-soft);
+.nav-toggle__icon > svg {
+  grid-area: 1 / 1;
+  inline-size: 100%;
+  block-size: 100%;
+  transition: opacity   var(--dur-fast) var(--ease-soft),
+              transform var(--dur-fast) var(--ease-soft);
 }
 
-/* Bars fold into an X while the panel is open - a shape change, not just
-   a colour change, so the state is never signalled by colour alone. */
-.nav-toggle[aria-expanded="true"] .nav-toggle__bars span:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
-}
-.nav-toggle[aria-expanded="true"] .nav-toggle__bars span:nth-child(2) {
+/* The glyph is the one orange thing in the button - brand, not decoration
+   of the word beside it. */
+.nav-toggle__glyph { color: var(--c-accent); }
+
+.nav-toggle__close { opacity: 0; transform: rotate(-90deg) scale(.6); }
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__glyph {
   opacity: 0;
+  transform: scale(.6);
 }
-.nav-toggle[aria-expanded="true"] .nav-toggle__bars span:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__close {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-toggle__icon > svg { transition: opacity var(--dur-fast) var(--ease-soft); }
+  .nav-toggle__close,
+  .nav-toggle[aria-expanded="true"] .nav-toggle__glyph { transform: none; }
 }
 
 /* ---- Nav panel (mobile) ----
-   visibility:hidden also removes the links from the tab order, so a closed
-   menu can never be reached by keyboard. */
+   visibility:hidden also takes the links out of the tab order. */
 
 .site-nav {
   position: fixed;
@@ -591,7 +723,7 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   gap: var(--sp-8);
 
   padding: var(--sp-10) var(--gutter);
-  background-color: var(--c-bg);
+  background-color: var(--band);
 
   visibility: hidden;
   opacity: 0;
@@ -609,15 +741,16 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
 .site-nav__list {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: var(--sp-1);
 }
 
 .site-nav__list a {
   display: block;
-  padding-block: var(--sp-3);
-  font-size: clamp(1.5rem, 6vw, 2rem);
-  font-weight: 900;
-  letter-spacing: var(--ls-tight);
+  padding-block: var(--sp-1);
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 11vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.1;
   text-decoration: none;
   color: var(--c-ink);
   transition: color var(--dur-fast) var(--ease-soft);
@@ -625,8 +758,6 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
 
 .site-nav__list a:hover { color: var(--c-accent); }
 
-/* Header actions: the client-area link and the WhatsApp button. Stacked
-   in the mobile panel, side by side once the nav becomes a bar. */
 .site-nav__actions {
   display: flex;
   flex-direction: column;
@@ -634,16 +765,15 @@ p { text-wrap: pretty; }  /* avoids orphaned last words */
   gap: var(--sp-4);
 }
 
-/* Locks background scrolling while the mobile panel is open. */
 body.nav-open { overflow: hidden; }
 
 
 /* ==========================================================================
-   11. HERO
+   11. HERO (band)
    ========================================================================== */
 
 .hero {
-  padding-block: var(--sp-8) var(--section-y);
+  padding-block: var(--sp-7) calc(var(--sp-9) + var(--r-sheet));
 }
 
 .hero__inner {
@@ -654,9 +784,11 @@ body.nav-open { overflow: hidden; }
 
 .hero__title {
   font-size: var(--fs-display);
-  line-height: var(--lh-tight);
-  margin-block-start: var(--sp-4);
+  line-height: .86;
+  margin-block-start: var(--sp-5);
 }
+
+.hero__title-accent { color: var(--c-accent); }
 
 .hero__lead { margin-block-start: var(--sp-6); }
 
@@ -664,11 +796,11 @@ body.nav-open { overflow: hidden; }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sp-4);
-  margin-block-start: var(--sp-8);
+  gap: var(--sp-3);
+  margin-block-start: var(--sp-7);
 }
 
-.media--hero { aspect-ratio: 3 / 2; }
+.media--hero { aspect-ratio: 4 / 3; }
 .media--hero img { object-position: 50% 40%; }
 
 
@@ -682,7 +814,7 @@ body.nav-open { overflow: hidden; }
   gap: var(--sp-8);
 }
 
-.about__title { margin-block: var(--sp-3) var(--sp-6); }
+.about__title { margin-block: var(--sp-4) var(--sp-6); }
 
 .about__text {
   display: flex;
@@ -701,31 +833,38 @@ body.nav-open { overflow: hidden; }
 
 .training__grid {
   display: grid;
-  gap: var(--sp-5);
+  gap: var(--sp-4);
 }
 
-/* A single, flat panel - deliberately not a card inside a card. */
 .option {
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
-  padding: var(--sp-7) var(--sp-6);
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-lg);
-  background-color: var(--c-surface);
-  transition: border-color var(--dur-base) var(--ease-soft);
+  padding: var(--sp-6) var(--sp-5);
 }
 
-.option:hover { border-color: var(--c-line-strong); }
+/* Index and title share a line: the orange figure is the tile's number. */
+.option__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+}
 
 .option__index {
-  font-size: var(--fs-sm);
-  font-weight: 900;
-  letter-spacing: var(--ls-wide);
-  color: var(--c-accent);
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-accent-text);
 }
 
-.option__title { margin-block-end: var(--sp-1); }
+.option__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  font-weight: 700;
+  line-height: 1;
+}
 
 .option__text { color: var(--c-ink-soft); }
 
@@ -733,14 +872,14 @@ body.nav-open { overflow: hidden; }
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
-  margin-block-start: var(--sp-3);
+  margin-block-start: auto;
   padding-block-start: var(--sp-4);
   border-block-start: 1px solid var(--c-line);
   font-size: var(--fs-sm);
-  color: var(--c-muted);
+  color: var(--c-ink-soft);
 }
 
-/* Bullet drawn as a text marker rather than colour alone. */
+/* Bullet drawn as a short rule, not a colour dot. */
 .option__list li {
   position: relative;
   padding-inline-start: var(--sp-5);
@@ -751,9 +890,10 @@ body.nav-open { overflow: hidden; }
   content: '';
   position: absolute;
   inset-inline-start: 0;
-  inset-block-start: .65em;
-  inline-size: .5rem;
-  block-size: 1px;
+  inset-block-start: .7em;
+  inline-size: .625rem;
+  block-size: 2px;
+  border-radius: 1px;
   background-color: var(--c-accent);
 }
 
@@ -764,8 +904,6 @@ body.nav-open { overflow: hidden; }
   flex-direction: column;
   gap: var(--sp-7);
   margin-block-start: var(--sp-10);
-  padding-block-start: var(--sp-10);
-  border-block-start: 1px solid var(--c-line);
 }
 
 .style-block__copy {
@@ -776,20 +914,27 @@ body.nav-open { overflow: hidden; }
   max-inline-size: var(--measure);
 }
 
+.style-block__copy h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  line-height: 1;
+  color: var(--c-ink);
+}
+
 .media--style { aspect-ratio: 1 / 1; }
 
 
 /* ==========================================================================
-   14. PROCESS
+   14. PROCESS (band)
    ========================================================================== */
 
 .process__inner {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-9);
+  gap: var(--sp-8);
 }
 
-.process__aside h2 { margin-block: var(--sp-3) var(--sp-5); }
+.process__aside h2 { margin-block: var(--sp-4) var(--sp-5); }
 
 .media--detail {
   aspect-ratio: 3 / 2;
@@ -799,125 +944,450 @@ body.nav-open { overflow: hidden; }
 .process__steps {
   display: flex;
   flex-direction: column;
-  gap: 0;
   padding: 0;
   list-style: none;
-  counter-reset: none;
 }
 
 .step {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--sp-5);
-  padding-block: var(--sp-7);
+  grid-template-columns: 3rem 1fr;
+  gap: var(--sp-4);
+  padding-block: var(--sp-6);
   border-block-start: 1px solid var(--c-line);
 }
 
 .step:last-child { border-block-end: 1px solid var(--c-line); }
 
+/* The display-face figure, as on the app's stat tiles. */
 .step__num {
-  font-size: clamp(1.75rem, 6vw, 2.5rem);
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: var(--ls-tight);
-  color: transparent;
-  /* Outlined numerals: presence without shouting. */
-  -webkit-text-stroke: 1px var(--c-accent);
-  min-inline-size: 2.5ch;
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: .85;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-accent);
 }
 
 .step__body {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
+  gap: var(--sp-2);
 }
-
-.step__title { font-size: var(--fs-h3); }
 
 .step__body p { color: var(--c-ink-soft); max-inline-size: var(--measure); }
 
 
 /* ==========================================================================
-   15. RESULTS — before / after
+   15. THE APP (sheet) - Dylan, the scroll stage, the close
+   The stage is a phone that holds still while chapters of copy scroll past
+   it; each chapter swaps the screen. Built so the mock screens can be
+   replaced by screenshots, video or a 3D model without touching layout -
+   see the comment above the section in index.html.
    ========================================================================== */
 
-.results__grid {
-  display: grid;
-  gap: var(--sp-6);
-}
+/* ---- Stage ---- */
 
-.result {
-  border-radius: var(--r-lg);
-  overflow: hidden;
-}
+.stage { position: relative; display: grid; }
 
-/* The two halves of one comparison, always side by side so the pair reads
-   as a single unit at every screen size. */
-.result__pair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--sp-2);
-}
-
-.result__figure {
-  position: relative;
-  margin: 0;
-  overflow: hidden;
-  border-radius: var(--r-md);
-  background-color: var(--c-surface);
-}
-
-.result__figure img {
-  inline-size: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-}
-
-/* Text label, not a colour cue - the before/after distinction has to
-   survive greyscale and screen readers alike. */
-.result__label {
-  position: absolute;
-  inset-block-start: var(--sp-3);
-  inset-inline-start: var(--sp-3);
+/* Phone first: held under the header while the chapters pass beneath it.
+   Its own background hides the copy sliding underneath, and a short fade
+   softens the edge the copy emerges from. */
+.stage__device {
+  position: sticky;
+  inset-block-start: 4.5rem;
   z-index: 2;
-  padding: var(--sp-1) var(--sp-3);
+  display: flex;
+  justify-content: center;
+  block-size: min(52svh, 28rem);
+  padding-block: var(--sp-3);
+  background-color: var(--c-bg);
+}
+
+.stage__device::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 100%;
+  block-size: var(--sp-6);
+  background: linear-gradient(var(--c-bg), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.phone-tilt { block-size: 100%; perspective: 1400px; }
+
+.phone {
+  position: relative;
+  block-size: 100%;
+  aspect-ratio: 9 / 19;
+  overflow: hidden;
+  container-type: inline-size;
+  border: .5rem solid var(--band-raised);
+  border-radius: 2.25rem;
+  background-color: var(--band);
+  box-shadow: 0 2rem 4rem rgba(11, 11, 13, .28);
+  transform-style: preserve-3d;
+}
+
+.phone__notch {
+  position: absolute;
+  z-index: 3;
+  inset-block-start: 1.4%;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  inline-size: 30%;
+  block-size: 3%;
   border-radius: var(--r-pill);
-  background-color: rgba(13, 14, 18, .82);
-  color: var(--c-ink);
+  background-color: #000;
+}
+
+/* Every size inside the phone is in em off a font size set in container
+   units, so the mock scales as one piece from a 190px phone to a 330px one. */
+.scr,
+.phone__tabs { font-size: clamp(7px, 4.6cqw, 15px); }
+
+.scr {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--band);
+  opacity: 0;
+  transform: translateY(3%);
+  transition: opacity .45s var(--ease-soft), transform .45s var(--ease-soft);
+}
+
+.scr.is-active { opacity: 1; transform: none; }
+
+.scr svg { inline-size: 1.2em; block-size: 1.2em; flex: none; }
+
+.scr__band { padding: 3.4em 1.4em 2.6em; color: #fff; line-height: 1.2; }
+.scr__kicker { font-size: .8em; color: rgba(255, 255, 255, .64); }
+.scr__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 3.2em;
+  line-height: .95;
+}
+
+/* The app's sheet: white, rounded top, riding over the band. */
+.scr__sheet {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: .75em;
+  margin-block-start: -1.6em;
+  padding: 1.6em 1.2em 5em;
+  border-radius: 1.8em 1.8em 0 0;
+  background-color: #fff;
+  color: #0e0e10;
+  line-height: 1.35;
+}
+
+.scr__label { font-weight: 700; }
+
+.scr__input {
+  padding: .8em 1em;
+  border: 1px solid rgba(11, 11, 13, .1);
+  border-radius: .9em;
+  background-color: #f2f2ef;
+}
+
+.scr__agent,
+.scr__chip {
+  display: flex;
+  align-items: center;
+  gap: .4em;
+  font-weight: 700;
+  color: var(--c-accent-ink);
+}
+
+.scr__agent { font-size: .9em; }
+
+.scr__chip {
+  padding: .55em .8em;
+  border-radius: var(--r-pill);
+  background-color: rgba(255, 107, 44, .14);
+  font-size: .76em;
+}
+
+.scr__list {
+  display: flex;
+  flex-direction: column;
+  gap: .5em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scr__list li,
+.scr__card,
+.scr__set {
+  padding: .7em .9em;
+  border-radius: .8em;
+  background-color: #f2f2ef;
+}
+
+.scr__list li { display: flex; justify-content: space-between; align-items: center; }
+.scr__list i { font-style: normal; font-size: .75em; font-weight: 700; color: #1d7f52; }
+
+.scr__card { display: flex; flex-direction: column; gap: .15em; }
+.scr__card b { font-size: .95em; }
+.scr__card span { font-size: .85em; color: #46494f; }
+.scr__card i { font-style: normal; font-size: .75em; font-weight: 700; color: var(--c-accent-ink); }
+.scr__card--agent b { display: flex; align-items: center; gap: .35em; color: var(--c-accent-ink); }
+
+.scr__ok { font-size: .85em; font-weight: 700; color: #1d7f52; }
+
+.scr__pair { display: grid; grid-template-columns: 1fr 1fr; gap: .5em; }
+
+.scr__photo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 4;
+  border-radius: .8em;
+  background: linear-gradient(160deg, #e8e8e4, #cfcfca);
+  color: rgba(11, 11, 13, .28);
+}
+
+.scr__photo svg { inline-size: 55%; block-size: 55%; }
+
+.scr__photo i {
+  position: absolute;
+  inset-block-start: .5em;
+  inset-inline-start: .5em;
+  padding: .2em .6em;
+  border-radius: var(--r-pill);
+  background-color: rgba(11, 11, 13, .82);
+  color: #fff;
+  font-style: normal;
+  font-size: .7em;
+  font-weight: 700;
+}
+
+.scr__lock { font-size: .75em; color: #5f636b; }
+
+.scr__set { display: flex; align-items: center; gap: .4em; }
+.scr__set span { flex: 1; font-size: .92em; font-weight: 700; }
+.scr__set i {
+  inline-size: 1.4em;
+  block-size: 1.4em;
+  border: 2px solid rgba(11, 11, 13, .2);
+  border-radius: 50%;
+}
+.scr__set i.on { border-color: var(--c-accent); background-color: var(--c-accent); }
+
+.scr__pr {
+  margin-block-start: .3em;
+  padding: .8em;
+  border-radius: .9em;
+  background-color: var(--band);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.7em;
+  line-height: 1;
+  text-align: center;
+}
+
+/* The app's black tab bar with its raised orange "+". */
+.phone__tabs {
+  position: absolute;
+  z-index: 3;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  block-size: 11%;
+  padding-inline: 1em;
+  background-color: var(--band);
+}
+
+.phone__tabs span {
+  inline-size: 1.3em;
+  block-size: 1.3em;
+  border-radius: .35em;
+  background-color: rgba(255, 255, 255, .28);
+}
+
+.phone__tabs b {
+  display: grid;
+  place-items: center;
+  inline-size: 2.6em;
+  block-size: 2.6em;
+  margin-block-start: -1.4em;
+  border-radius: 50%;
+  background-color: var(--c-accent);
+  color: var(--c-on-accent);
+  font-size: 1.3em;
+  box-shadow: 0 0 0 .3em var(--band);
+}
+
+/* ---- Chapters ---- */
+
+.stage__chapters {
+  margin: 0;
+  padding: 0 0 18svh;
+  list-style: none;
+}
+
+/* On a phone the copy starts at the top of its chapter, so it rises into
+   view right under the pinned device instead of trailing in from the
+   bottom edge. Wide screens centre it beside the phone (section 20). */
+.chapter {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  min-block-size: 52svh;
+  padding-block: var(--sp-5);
+  transition: opacity var(--dur-base) var(--ease-soft);
+}
+
+/* Once main.js is steering, the chapters not on screen step back. Without
+   it, all four read at full strength. */
+.stage.is-live .chapter { opacity: .3; }
+.stage.is-live .chapter.is-active { opacity: 1; }
+
+.chapter__num {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: .85;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-accent-text);
+}
+
+.chapter__kicker {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--c-muted);
+}
+
+.chapter__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  font-weight: 700;
+  line-height: .95;
+}
+
+.chapter__text {
+  max-inline-size: 36ch;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-normal);
+  color: var(--c-ink-soft);
+}
+
+.chapter__soon {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  font-weight: 500;
+  color: var(--c-ink-soft);
+}
+
+/* Marks a feature that is announced, not shipped. Text, not just colour. */
+.tag-soon {
+  padding: .2rem .7rem;
+  border-radius: var(--r-pill);
+  background-color: rgba(255, 107, 44, .14);
+  color: var(--c-accent-text);
   font-size: var(--fs-xs);
   font-weight: 700;
 }
 
-/* Placeholder shown until real client photographs are supplied. */
-.result__slot {
-  position: relative;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 4 / 5;
-  border: 1px dashed var(--c-line-strong);
-  border-radius: var(--r-md);
-  background-color: var(--c-surface);
+@media (prefers-reduced-motion: reduce) {
+  .scr { transform: none; transition: opacity .2s linear; }
+  .chapter { transition: none; }
 }
 
-.result__placeholder {
-  font-size: var(--fs-xs);
-  color: var(--c-muted);
+/* ---- The close: WhatsApp for newcomers, the app for members ---- */
+
+/* The top margin clears the pinned phone's fade, which otherwise lands
+   on this box as the stage scrolls out. */
+.showcase__close {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin-block-start: var(--sp-8);
+  padding: var(--sp-7) var(--sp-5);
+  border-radius: var(--r-xl);
+}
+
+.showcase__close-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  font-weight: 700;
+  line-height: .95;
+}
+
+.showcase__close-text {
+  margin-block-start: var(--sp-3);
+  max-inline-size: 42ch;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-normal);
+  color: var(--c-ink-soft);
+}
+
+.showcase__close-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-4);
+}
+
+.showcase__member {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-block-size: var(--target-min);
+  font-weight: 700;
+  color: var(--c-ink);
+  text-decoration: none;
 }
 
 
 /* ==========================================================================
-   16. CALL TO ACTION
+   15b. WHY TRUST IT (band)
    ========================================================================== */
 
-.cta__panel {
+.trust__grid { display: grid; gap: var(--sp-4); }
+
+.trust__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-6) var(--sp-5);
+}
+
+.trust__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 3rem;
+  block-size: 3rem;
+  margin-block-end: var(--sp-2);
+  border-radius: var(--r-pill);
+  background-color: rgba(255, 107, 44, .14);
+  color: var(--c-accent);
+}
+
+.trust__icon svg { inline-size: 1.5rem; block-size: 1.5rem; }
+
+.trust__item p { color: var(--c-ink-soft); }
+
+
+/* ==========================================================================
+   16. CALL TO ACTION (band)
+   ========================================================================== */
+
+.cta__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--sp-5);
-  padding: var(--sp-9) var(--sp-6);
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-lg);
-  background-color: var(--c-surface);
   text-align: center;
 }
 
@@ -934,82 +1404,44 @@ body.nav-open { overflow: hidden; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--sp-5);
-  margin-block-start: var(--sp-3);
+  gap: var(--sp-4);
+  margin-block-start: var(--sp-4);
 }
 
 .cta__phone {
   display: inline-flex;
   align-items: center;
   min-block-size: var(--target-min);
+  font-size: var(--fs-lead);
   font-weight: 700;
-  color: var(--c-ink-soft);
-  text-decoration: none;
-  border-block-end: 1px solid var(--c-line-strong);
-  transition: color var(--dur-fast) var(--ease-soft),
-              border-color var(--dur-fast) var(--ease-soft);
+  color: var(--c-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--c-line-strong);
+  transition: text-decoration-color var(--dur-fast) var(--ease-soft);
 }
 
-.cta__phone:hover,
-.cta__phone:focus-visible {
-  color: var(--c-accent-soft);
-  border-block-end-color: var(--c-accent);
-}
+.cta__phone:hover { text-decoration-color: var(--c-accent); }
 
 
 /* ==========================================================================
-   17. LOCATION
+   16b. THE STUDIO (on the first sheet, after the training options)
    ========================================================================== */
 
-.location__grid {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-8);
-}
-
-.location__info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-5);
-}
-
-.location__address {
-  display: flex;
-  flex-direction: column;
-  font-style: normal;
-  line-height: 1.25;
-}
-
-.location__street {
-  font-size: var(--fs-h3);
-  font-weight: 900;
-  letter-spacing: var(--ls-tight);
-}
-
-.location__city {
-  font-size: var(--fs-lead);
-  color: var(--c-muted);
-}
-
-.location__note {
-  display: flex;
+/* "Where is it": the address as a link down to the map, so the section
+   that shows the place also answers how to reach it. */
+.studio-section__where {
+  display: inline-flex;
   align-items: center;
-  gap: var(--sp-3);
-  color: var(--c-ink-soft);
+  gap: var(--sp-2);
+  min-block-size: var(--target-min);
+  font-weight: 700;
+  color: var(--c-accent-text);
+  text-decoration: none;
 }
 
-.location__note .icon { color: var(--c-accent); }
+.studio-section__where:hover { text-decoration: underline; }
 
-.location__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-3);
-}
-
-.media--studio {
-  aspect-ratio: 3 / 2;
-  margin-block-start: var(--sp-3);
-}
+.media--studio { aspect-ratio: 3 / 2; }
 
 /*
  * The studio gallery: one large frame with a strip of thumbnails under it.
@@ -1018,9 +1450,6 @@ body.nav-open { overflow: hidden; }
  * this section to look at, and needs controls that four images do not justify.
  * Every photo is visible at once; clicking one promotes it to the large frame.
  */
-.studio {
-  margin-block-start: var(--sp-8);
-}
 
 .studio-gallery {
   display: grid;
@@ -1038,7 +1467,7 @@ body.nav-open { overflow: hidden; }
   border-radius: var(--r-md);
   aspect-ratio: 4 / 3;
   /* Dimmed until chosen, so the current photo is obvious without a caption. */
-  opacity: 0.55;
+  opacity: .55;
   transition: opacity var(--dur-fast) var(--ease-soft),
               box-shadow var(--dur-fast) var(--ease-soft);
 }
@@ -1051,38 +1480,80 @@ body.nav-open { overflow: hidden; }
 }
 
 .studio-thumb:hover,
-.studio-thumb:focus-visible {
-  opacity: 1;
-}
+.studio-thumb:focus-visible { opacity: 1; }
 
 /*
- * The selected thumbnail. Full opacity AND a ring - two channels, because
- * opacity alone is a weak signal and disappears entirely for anyone who
- * cannot separate the two states by brightness.
- */
-/*
- * Selection uses box-shadow, NOT outline.
+ * The selected thumbnail: full opacity AND a ring - two channels, because
+ * opacity alone is a weak signal.
  *
- * outline belongs to :focus-visible. An earlier version marked the current
- * thumbnail with an outline, which had the same specificity as the sitewide
- * focus rule and came later in the file - so it silently replaced the focus
- * ring, and a keyboard user tabbing through the gallery got nothing but a
- * change in brightness. Keeping the two on separate properties means neither
- * state can erase the other, and a focused non-current thumbnail shows both.
+ * Selection uses box-shadow, NOT outline. outline belongs to :focus-visible;
+ * an earlier version marked the current thumbnail with an outline, which
+ * silently replaced the focus ring. On separate properties neither can erase
+ * the other, and a focused non-current thumbnail shows both.
  */
 .studio-thumb.is-current {
   opacity: 1;
-  box-shadow: 0 0 0 2px var(--c-accent);
+  box-shadow: 0 0 0 2px var(--c-focus);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .studio-thumb { transition: none; }
 }
 
+
+/* ==========================================================================
+   17. LOCATION (sheet)
+   ========================================================================== */
+
+.location__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-7);
+}
+
+.location__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.location__address {
+  display: flex;
+  flex-direction: column;
+  font-style: normal;
+}
+
+.location__street {
+  font-family: var(--font-display);
+  font-size: var(--fs-title);
+  font-weight: 700;
+  line-height: .95;
+}
+
+.location__city {
+  font-size: var(--fs-lead);
+  color: var(--c-ink-soft);
+}
+
+.location__note {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  color: var(--c-ink-soft);
+}
+
+.location__note .icon { color: var(--c-accent-text); }
+
+.location__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
 .location__map {
   overflow: hidden;
   border: 1px solid var(--c-line);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-xl);
   background-color: var(--c-surface);
 }
 
@@ -1093,17 +1564,14 @@ body.nav-open { overflow: hidden; }
   border: 0;
 }
 
-
 /* ==========================================================================
-   18. FOOTER
+   18. FOOTER (band)
    The extra block-end padding keeps the last row clear of the floating
    WhatsApp button.
    ========================================================================== */
 
 .site-footer {
-  margin-block-start: var(--section-y);
   padding-block: var(--sp-9) calc(var(--sp-12) + env(safe-area-inset-bottom, 0px));
-  border-block-start: 1px solid var(--c-line);
 }
 
 .site-footer__grid {
@@ -1113,19 +1581,21 @@ body.nav-open { overflow: hidden; }
 }
 
 .site-footer__name {
-  font-size: var(--fs-h3);
-  font-weight: 900;
-  letter-spacing: var(--ls-tight);
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .site-footer__role { color: var(--c-muted); }
 
 .site-footer__heading {
-  font-size: var(--fs-xs);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
   font-weight: 700;
-  letter-spacing: var(--ls-wide);
+  line-height: 1.3;
   color: var(--c-muted);
-  margin-block-end: var(--sp-3);
+  margin-block-end: var(--sp-2);
 }
 
 .site-footer__address { font-style: normal; color: var(--c-ink-soft); }
@@ -1133,7 +1603,6 @@ body.nav-open { overflow: hidden; }
 .site-footer__links {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-1);
 }
 
 .site-footer__links a {
@@ -1147,8 +1616,23 @@ body.nav-open { overflow: hidden; }
 
 .site-footer__links a:hover,
 .site-footer__links a:focus-visible {
-  color: var(--c-accent-soft);
+  color: var(--c-ink);
   text-decoration: underline;
+}
+
+/* The way into the app: the one link in the footer that is an action, not
+   information, so it is the one that looks like it. Bold orange, carrying
+   the same arrow badge as the header's sign-in button (section 8). */
+.site-footer__links a.site-footer__app {
+  gap: var(--sp-3);
+  font-weight: 700;
+  color: var(--c-accent-text);
+}
+
+.site-footer__links a.site-footer__app:hover,
+.site-footer__links a.site-footer__app:focus-visible {
+  color: var(--c-accent-text);
+  text-decoration: none;
 }
 
 .site-footer__legal {
@@ -1161,15 +1645,15 @@ body.nav-open { overflow: hidden; }
 
 /* ==========================================================================
    19. FLOATING WHATSAPP
-   Sits on the inline-end edge, which resolves to the left in RTL, and
-   respects iOS safe areas.
+   Inline-end edge - the left in RTL, where the app puts its own WhatsApp
+   pill - clear of iOS safe areas.
    ========================================================================== */
 
 .wa-float {
   position: fixed;
   z-index: 80;
-  inset-block-end: calc(var(--sp-5) + env(safe-area-inset-bottom, 0px));
-  inset-inline-end: calc(var(--sp-5) + env(safe-area-inset-left, 0px));
+  inset-block-end: calc(var(--sp-4) + env(safe-area-inset-bottom, 0px));
+  inset-inline-end: calc(var(--sp-4) + env(safe-area-inset-left, 0px));
 
   display: inline-flex;
   align-items: center;
@@ -1193,48 +1677,47 @@ body.nav-open { overflow: hidden; }
               transform var(--dur-fast) var(--ease-soft);
 }
 
-.wa-float:hover,
+.wa-float:hover { background-color: var(--c-wa-hover); }
+.wa-float:active { transform: scale(.96); }
+
+/* The float sits on both grounds as the page scrolls, so its ring is the
+   one colour that holds on each: near-black with a white halo. */
 .wa-float:focus-visible {
-  background-color: var(--c-wa-hover);
-  transform: translateY(-2px);
+  outline: 2px solid var(--band);
+  box-shadow: 0 0 0 5px #fff, var(--shadow-md);
 }
 
 .wa-float__icon { inline-size: 1.75rem; block-size: 1.75rem; flex: none; }
 
-/* Label is hidden on small screens where the circle form saves space;
-   the accessible name still comes from the visually-hidden text. */
 .wa-float__text { display: none; }
 
 
 /* ==========================================================================
    20. BREAKPOINTS
-   Widths are in em so the layout responds to browser text zoom as well as
-   to viewport width.
+   Widths in em so the layout also responds to browser text zoom.
    ========================================================================== */
 
-/* ---- 40em / 640px — large phones, small tablets ---------------------- */
+/* ---- 40em / 640px ---------------------------------------------------- */
 @media (min-width: 40em) {
-
-  .hero__actions { gap: var(--sp-5); }
 
   .cta__actions {
     flex-direction: row;
     gap: var(--sp-7);
   }
 
-  .results__grid { gap: var(--sp-7); }
 
   .site-footer__grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 
-/* ---- 48em / 768px — tablets ------------------------------------------ */
+/* ---- 48em / 768px ---------------------------------------------------- */
 @media (min-width: 48em) {
 
   .training__grid { grid-template-columns: repeat(2, 1fr); }
-
-  /* Third option spans both columns rather than leaving a gap. */
   .option:last-child { grid-column: 1 / -1; }
+
+  .option,
+  .trust__item { padding: var(--sp-7) var(--sp-6); }
 
   .style-block {
     flex-direction: row;
@@ -1246,29 +1729,175 @@ body.nav-open { overflow: hidden; }
   .style-block__copy  { flex: 1 1 auto; }
 
   .step {
-    grid-template-columns: 4rem 1fr;
-    gap: var(--sp-7);
-    padding-block: var(--sp-8);
+    grid-template-columns: 4.5rem 1fr;
+    gap: var(--sp-6);
+    padding-block: var(--sp-7);
+  }
+
+  .step__num { font-size: 3.5rem; }
+
+  .showcase__close {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sp-8);
   }
 
   .location__map iframe { block-size: 26rem; }
 
-  .media--hero { aspect-ratio: 16 / 9; }
+  .media--hero { aspect-ratio: 16 / 10; }
 
-  /* Pill form: there is room for a label next to the icon. */
-  .wa-float {
-    padding-inline: var(--sp-5) var(--sp-6);
-    gap: var(--sp-3);
-  }
-
+  .wa-float { padding-inline: var(--sp-5) var(--sp-6); }
   .wa-float__text { display: inline; }
 }
 
 
-/* ---- 64em / 1024px — laptops ----------------------------------------- */
+/* ---- 64em / 1024px --------------------------------------------------- */
 @media (min-width: 64em) {
 
-  /* Inline navigation replaces the overlay panel. */
+  /* ---- The shared grid ----
+     Every two-part row sits on the same 12 columns and 24px gutter, so a
+     photo or a column of copy lands on the same edges section after
+     section. Column 1 is the start - the right, in RTL. */
+  .hero__inner,
+  .about__inner,
+  .style-block,
+  .process__inner,
+  .location__grid,
+  .stage,
+  .site-footer__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--grid-gap);
+  }
+
+  /* ---- Hero: copy on 7 columns, photograph on 5 ---- */
+  .hero {
+    display: flex;
+    align-items: center;
+    min-block-size: min(86vh, 52rem);
+    padding-block: var(--sp-8) calc(var(--sp-10) + var(--r-sheet));
+  }
+
+  .hero__inner { align-items: center; }
+
+  .hero__copy  { grid-column: 1 / span 7; }
+  .hero__media { grid-column: 8 / span 5; }
+
+  .media--hero { aspect-ratio: 9 / 10; }
+  .media--hero img { object-position: 55% 35%; }
+
+  /* ---- About: portrait on 5 columns, copy from column 7 ---- */
+  .about__inner { align-items: center; }
+
+  .about__media { grid-column: 1 / span 5; }
+  .about__copy  { grid-column: 7 / span 6; }
+
+  .media--portrait { aspect-ratio: 9 / 10; }
+
+  /* ---- Training: three across ---- */
+  .training__grid { grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); }
+  .option:last-child { grid-column: auto; }
+
+  .style-block {
+    align-items: center;
+    margin-block-start: 6rem;
+  }
+
+  .style-block__media { grid-column: 1 / span 5; }
+  .style-block__copy  { grid-column: 7 / span 6; }
+
+  .media--style { aspect-ratio: 8 / 7; }
+
+  /* ---- Process: sticky heading against scrolling steps ---- */
+  .process__inner { align-items: stretch; }
+
+  /* Stretched to the height of the steps: a sticky child can only travel
+     inside its parent, and a parent sized to its own content leaves it
+     nowhere to go - which is why this heading never actually stuck. */
+  .process__aside { grid-column: 1 / span 5; }
+  .process__steps { grid-column: 7 / span 6; align-self: start; }
+
+  /* The steps run far longer than the heading, so the aside is sticky and
+     its photo stretches to fill the rest of the viewport: a tall frame the
+     steps scroll past, rather than a small landscape one above a column
+     of empty band. Capped so a very tall screen does not get a banner. */
+  .process__aside-sticky {
+    position: sticky;
+    inset-block-start: var(--sp-11);
+    display: flex;
+    flex-direction: column;
+    block-size: calc(100vh - var(--sp-11) - var(--sp-7));
+    block-size: calc(100svh - var(--sp-11) - var(--sp-7));
+    max-block-size: 56rem;
+  }
+
+  .media--detail {
+    flex: 1 1 auto;
+    aspect-ratio: auto;
+    min-block-size: 18rem;
+  }
+
+  /* Keep the balls and kettlebells, the subject, in frame as it goes tall. */
+  .media--detail img { object-position: 45% 60%; }
+
+  /* ---- App stage: copy scrolls on the start side, the phone holds
+     still on the end side, vertically centred in the viewport ---- */
+  .stage { align-items: start; }
+
+  .stage__device {
+    grid-column: 8 / span 5;
+    grid-row: 1;
+    inset-block-start: 6rem;
+    align-items: center;
+    block-size: calc(100svh - 8rem);
+    max-block-size: 46rem;
+    padding: 0;
+    background: none;
+  }
+
+  .stage__device::after { display: none; }
+
+  .stage__chapters {
+    grid-column: 1 / span 7;
+    grid-row: 1;
+    padding-block: 8svh 16svh;
+  }
+
+  .chapter { justify-content: center; min-block-size: 78svh; padding-block: var(--sp-8); }
+  .chapter__num { font-size: 3.5rem; }
+
+  .phone { border-width: .6rem; border-radius: 3rem; }
+
+  /* ---- Trust: three across ---- */
+  .trust__grid { grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); }
+
+  /* ---- Location ---- */
+  .location__grid { align-items: start; }
+
+  .location__info { grid-column: 1 / span 4; }
+  .location__map  { grid-column: 6 / span 7; }
+
+  .location__map iframe { block-size: 30rem; }
+
+  /* ---- Studio: the large frame goes panoramic, thumbnails stay a strip ---- */
+  .media--studio { aspect-ratio: 16 / 9; }
+  .studio-gallery { gap: var(--sp-3); margin-block-start: var(--sp-3); }
+
+  .site-footer__grid > :nth-child(1) { grid-column: span 4; }
+  .site-footer__grid > :nth-child(2) { grid-column: span 3; }
+  .site-footer__grid > :nth-child(3) { grid-column: span 2; }
+  .site-footer__grid > :nth-child(4) { grid-column: span 3; }
+}
+
+
+/* ---- 80em / 1280px --------------------------------------------------- */
+@media (min-width: 80em) {
+
+  /* Inline navigation replaces the overlay panel. Not before 80em: six
+     links, two buttons and the brand need the room, and below this they
+     wrap onto two lines. main.js keys its menu behaviour to the same
+     width. */
   .nav-toggle { display: none; }
 
   .site-nav {
@@ -1286,16 +1915,20 @@ body.nav-open { overflow: hidden; }
   .site-nav__list {
     flex-direction: row;
     align-items: center;
-    gap: var(--sp-6);
+    gap: var(--sp-5);
   }
 
   .site-nav__list a {
     padding-block: var(--sp-2);
+    font-family: var(--font-body);
     font-size: var(--fs-sm);
     font-weight: 500;
-    letter-spacing: 0;
+    line-height: 1.5;
     color: var(--c-ink-soft);
+    white-space: nowrap;
   }
+
+  .site-nav__list a:hover { color: var(--c-ink); }
 
   .site-nav__actions {
     flex-direction: row;
@@ -1305,115 +1938,18 @@ body.nav-open { overflow: hidden; }
 
   .site-header { padding-block: var(--sp-4); }
 
-  /* ---- Hero: copy and photograph side by side ---- */
-  .hero {
-    display: flex;
-    align-items: center;
-    min-block-size: min(88vh, 54rem);
-    padding-block: var(--sp-9) var(--section-y);
-  }
-
-  .hero__inner {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--sp-9);
-  }
-
-  .hero__copy  { flex: 1 1 56%; }
-  .hero__media { flex: 1 1 44%; }
-
-  .media--hero { aspect-ratio: 1 / 1; }
-  .media--hero img { object-position: 55% 35%; }
-
-  /* ---- About: portrait beside the copy ---- */
-  .about__inner {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--sp-10);
-  }
-
-  .about__media { flex: 0 0 40%; }
-  .about__copy  { flex: 1 1 auto; }
-
-  /* ---- Training: three across ---- */
-  .training__grid { grid-template-columns: repeat(3, 1fr); }
-  .option:last-child { grid-column: auto; }
-
-  .style-block {
-    margin-block-start: var(--sp-12);
-    padding-block-start: var(--sp-12);
-    gap: var(--sp-10);
-  }
-
-  /* ---- Process: sticky heading against scrolling steps ---- */
-  .process__inner {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: var(--sp-10);
-  }
-
-  .process__aside { flex: 0 0 34%; }
-  .process__steps { flex: 1 1 auto; }
-
-  .process__aside-sticky {
-    position: sticky;
-    inset-block-start: var(--sp-11);
-  }
-
-  .step__num { font-size: 3rem; }
-
-  /* ---- Results: two comparisons per row ---- */
-  .results__grid { grid-template-columns: repeat(2, 1fr); }
-
-  /* ---- Location: information beside the map ---- */
-  .location__grid {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: var(--sp-9);
-  }
-
-  .location__info { flex: 0 0 40%; }
-  .location__map  { flex: 1 1 auto; }
-
-  .location__map iframe { block-size: 34rem; }
-
-  /* ---- Footer: four columns ---- */
-  .site-footer__grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
-
-  .cta__panel { padding: var(--sp-11) var(--sp-9); }
 }
 
 
-/* ---- 80em / 1280px — desktop ----------------------------------------- */
-@media (min-width: 80em) {
-
-  .hero__inner { gap: var(--sp-11); }
-
-  .section-head { margin-block-end: var(--sp-10); }
-
-  .training__grid { gap: var(--sp-6); }
-
-  .option { padding: var(--sp-8) var(--sp-7); }
-
-  .step { grid-template-columns: 5rem 1fr; }
-}
-
-
-/* ---- 100em / 1600px — large displays ---------------------------------
-   Type and rhythm open up rather than the container simply stretching. */
+/* ---- 100em / 1600px -------------------------------------------------- */
 @media (min-width: 100em) {
 
-  :root { --section-y: 10rem; }
-
-  .hero__copy  { flex: 1 1 50%; }
-  .hero__media { flex: 1 1 50%; }
-
-  .results__grid { grid-template-columns: repeat(3, 1fr); }
+  /* Wider screens keep the same 1240px grid, centred; nothing reflows. */
+  .hero { min-block-size: min(80vh, 52rem); }
 }
 
 
-/* ---- Short landscape phones ------------------------------------------
-   Keeps the hero from demanding more height than the viewport has. */
+/* ---- Short landscape screens ---------------------------------------- */
 @media (min-width: 64em) and (max-height: 34rem) {
   .hero { min-block-size: auto; }
 }

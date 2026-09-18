@@ -6,15 +6,18 @@
 
   <title>הצהרת נגישות — יובל שקד, מאמן כושר אישי</title>
   <meta name="description" content="הצהרת הנגישות של אתר יובל שקד, מאמן כושר אישי בבאר שבע. פירוט התאמות הנגישות שיושמו באתר ודרכי פנייה.">
-  <meta name="theme-color" content="#0d0e12">
+  <meta name="theme-color" content="#0b0b0d">
+  <link rel="canonical" href="https://yuval-fitness.com/accessibility.html">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="robots" content="index, follow">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=Karantina:wght@700&display=swap">
 
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/accessibility.css">
+  <link rel="stylesheet" href="css/styles.css?v=8">
+  <link rel="stylesheet" href="css/accessibility.css?v=2">
 </head>
 
 <body>
@@ -41,7 +44,8 @@
   </header>
 
 
-  <main id="main">
+  <!-- The statement sits on a white sheet under the band, as in the app. -->
+  <main id="main" class="panel sheet legal-sheet">
     <article class="legal container container--narrow">
 
       <a class="legal__back" href="index.html">
@@ -147,7 +151,7 @@
             <p>שלמה גורן 15, באר שבע</p>
             <p class="legal__contact-links">
               <a href="tel:+972522247928">
-                טלפון:&rlm; <span dir="ltr">052-224-7928</span>
+                טלפון:&rlm;&nbsp;<span dir="ltr">052-224-7928</span>
               </a>
               <a href="https://wa.me/972522247928" target="_blank" rel="noopener">
                 וואטסאפ <span class="visually-hidden">(נפתח בחלון חדש)</span>
@@ -268,7 +272,7 @@
   </main>
 
 
-  <footer class="site-footer">
+  <footer class="site-footer panel band">
     <div class="container">
 
       <div class="site-footer__grid">
@@ -288,7 +292,7 @@
           <ul class="site-footer__links">
             <li>
               <a href="tel:+972522247928">
-                טלפון:&rlm; <span dir="ltr">052-224-7928</span>
+                טלפון:&rlm;&nbsp;<span dir="ltr">052-224-7928</span>
               </a>
             </li>
             <li>
@@ -303,7 +307,17 @@
           <h2 class="site-footer__heading">מידע</h2>
           <ul class="site-footer__links">
             <li><a href="index.html">דף הבית</a></li>
-            <li><a href="client-area.html">כניסת לקוחות</a></li>
+            <li>
+              <a class="site-footer__app app-link" href="https://app.yuval-fitness.com/">
+                כניסת מתאמנים
+                <span class="app-badge" aria-hidden="true">
+                  <svg class="icon icon--dir" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <path d="M5 12h14M13 6l6 6-6 6"/>
+                  </svg>
+                </span>
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -327,6 +341,6 @@
     <span class="visually-hidden">בוואטסאפ (נפתח בחלון חדש)</span>
   </a>
 
-  <script src="js/main.js" defer></script>
+  <script src="js/main.js?v=4" defer></script>
 </body>
 </html>

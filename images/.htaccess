@@ -1,0 +1,4 @@
+# The server has no MIME type for AVIF and sends these photos as text/plain.
+# Declared here rather than in the root .htaccess on purpose: the root file
+# also governs public_html/app (the coaching app), and this one cannot.
+AddType image/avif .avif
